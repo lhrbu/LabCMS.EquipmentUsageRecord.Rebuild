@@ -1,0 +1,34 @@
+﻿using LabCMS.EquipmentUsageRecord.Shared.Utils;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Text;
+using System.Text.Json.Serialization;
+using System.Threading.Tasks;
+
+namespace LabCMS.EquipmentUsageRecord.Shared.Models
+{
+    public class UsageRecord
+    {
+        [Key]
+        public int Id { get; set; }
+        public string User { get; set; } = null!;
+        public string TestNo { get; set; } = null!;
+
+        [ForeignKey(nameof(EquipmentHourlyRate))]
+        public int EquipmentNo { get; set; }
+        public EquipmentHourlyRate EquipmentHourlyRate { get; set; } = null!;
+        public string? TestType { get; set; }
+
+        [ForeignKey(nameof(Project))]
+        public int ProjectId { get; set; }
+        public Project Project { get; set; } = null!;
+
+        [JsonConverter(typeof(JsonConverters.DateTimeOffsetJsonConverter))]
+        public DateTimeOffset StartTime { get; set; }
+        [JsonConverter(typeof(JsonConverters.DateTimeOffsetJsonConverter))]
+        public DateTimeOffset EndTime { get; set; }
+    }
+}
