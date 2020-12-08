@@ -14,6 +14,5 @@ namespace LabCMS.EquipmentUsageRecord.Shared.Models
         public string EquipmentName { get; set; } = null!;
         public string MachineCategory { get; set; } = null!;
         public string HourlyRate { get; set; } = null!;
-        public List<UsageRecord> UsageRecords { get; set; } = null!;
     }
 }

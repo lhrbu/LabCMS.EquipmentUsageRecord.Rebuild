@@ -43,10 +43,8 @@ namespace LabCMS.EquipmentUsageRecord.Server.Migrations
 
             modelBuilder.Entity("LabCMS.EquipmentUsageRecord.Shared.Models.Project", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .UseIdentityByDefaultColumn();
+                    b.Property<string>("No")
+                        .HasColumnType("text");
 
                     b.Property<string>("FullName")
                         .IsRequired()
@@ -55,11 +53,7 @@ namespace LabCMS.EquipmentUsageRecord.Server.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
-                    b.Property<string>("No")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
+                    b.HasKey("No");
 
                     b.HasIndex("FullName");
 
@@ -73,18 +67,19 @@ namespace LabCMS.EquipmentUsageRecord.Server.Migrations
                         .HasColumnType("integer")
                         .UseIdentityByDefaultColumn();
 
-                    b.Property<DateTimeOffset>("EndTime")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<long>("EndTime")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("EquipmentNo")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("ProjectId")
-                        .HasColumnType("integer");
+                    b.Property<string>("ProjectNo")
+                        .IsRequired()
+                        .HasColumnType("text");
 
-                    b.Property<DateTimeOffset>("StartTime")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<long>("StartTime")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("TestNo")
                         .IsRequired()
@@ -102,7 +97,7 @@ namespace LabCMS.EquipmentUsageRecord.Server.Migrations
                     b.HasIndex("EquipmentNo")
                         .IncludeProperties(new[] { "TestType" });
 
-                    b.HasIndex("ProjectId");
+                    b.HasIndex("ProjectNo");
 
                     b.HasIndex("StartTime");
 
@@ -112,30 +107,20 @@ namespace LabCMS.EquipmentUsageRecord.Server.Migrations
             modelBuilder.Entity("LabCMS.EquipmentUsageRecord.Shared.Models.UsageRecord", b =>
                 {
                     b.HasOne("LabCMS.EquipmentUsageRecord.Shared.Models.EquipmentHourlyRate", "EquipmentHourlyRate")
-                        .WithMany("UsageRecords")
+                        .WithMany()
                         .HasForeignKey("EquipmentNo")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("LabCMS.EquipmentUsageRecord.Shared.Models.Project", "Project")
-                        .WithMany("UsageRecords")
-                        .HasForeignKey("ProjectId")
+                        .WithMany()
+                        .HasForeignKey("ProjectNo")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("EquipmentHourlyRate");
 
                     b.Navigation("Project");
-                });
-
-            modelBuilder.Entity("LabCMS.EquipmentUsageRecord.Shared.Models.EquipmentHourlyRate", b =>
-                {
-                    b.Navigation("UsageRecords");
-                });
-
-            modelBuilder.Entity("LabCMS.EquipmentUsageRecord.Shared.Models.Project", b =>
-                {
-                    b.Navigation("UsageRecords");
                 });
 #pragma warning restore 612, 618
         }

@@ -26,15 +26,13 @@ namespace LabCMS.EquipmentUsageRecord.Server.Migrations
                 name: "Projects",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     No = table.Column<string>(type: "text", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: true),
                     FullName = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Projects", x => x.Id);
+                    table.PrimaryKey("PK_Projects", x => x.No);
                 });
 
             migrationBuilder.CreateTable(
@@ -47,9 +45,9 @@ namespace LabCMS.EquipmentUsageRecord.Server.Migrations
                     TestNo = table.Column<string>(type: "text", nullable: false),
                     EquipmentNo = table.Column<string>(type: "text", nullable: false),
                     TestType = table.Column<string>(type: "text", nullable: true),
-                    ProjectId = table.Column<int>(type: "integer", nullable: false),
-                    StartTime = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    EndTime = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                    ProjectNo = table.Column<string>(type: "text", nullable: false),
+                    StartTime = table.Column<long>(type: "bigint", nullable: false),
+                    EndTime = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -61,10 +59,10 @@ namespace LabCMS.EquipmentUsageRecord.Server.Migrations
                         principalColumn: "EquipmentNo",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UsageRecords_Projects_ProjectId",
-                        column: x => x.ProjectId,
+                        name: "FK_UsageRecords_Projects_ProjectNo",
+                        column: x => x.ProjectNo,
                         principalTable: "Projects",
-                        principalColumn: "Id",
+                        principalColumn: "No",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -80,9 +78,9 @@ namespace LabCMS.EquipmentUsageRecord.Server.Migrations
                 .Annotation("Npgsql:IndexInclude", new[] { "TestType" });
 
             migrationBuilder.CreateIndex(
-                name: "IX_UsageRecords_ProjectId",
+                name: "IX_UsageRecords_ProjectNo",
                 table: "UsageRecords",
-                column: "ProjectId");
+                column: "ProjectNo");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UsageRecords_StartTime",

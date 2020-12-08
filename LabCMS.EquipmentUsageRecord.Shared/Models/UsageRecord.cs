@@ -23,7 +23,7 @@ namespace LabCMS.EquipmentUsageRecord.Shared.Models
         public string? TestType { get; set; }
 
         [ForeignKey(nameof(Project))]
-        public int ProjectId { get; set; }
+        public string ProjectNo { get; set; } = null!;
         public Project Project { get; set; } = null!;
 
         [JsonConverter(typeof(JsonConverters.DateTimeOffsetJsonConverter))]
