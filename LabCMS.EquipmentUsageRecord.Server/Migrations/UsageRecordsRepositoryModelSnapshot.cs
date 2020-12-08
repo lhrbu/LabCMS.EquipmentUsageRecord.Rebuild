@@ -21,16 +21,10 @@ namespace LabCMS.EquipmentUsageRecord.Server.Migrations
 
             modelBuilder.Entity("LabCMS.EquipmentUsageRecord.Shared.Models.EquipmentHourlyRate", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .UseIdentityByDefaultColumn();
-
-                    b.Property<string>("EquipmentName")
-                        .IsRequired()
+                    b.Property<string>("EquipmentNo")
                         .HasColumnType("text");
 
-                    b.Property<string>("EquipmentNo")
+                    b.Property<string>("EquipmentName")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -42,7 +36,7 @@ namespace LabCMS.EquipmentUsageRecord.Server.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.HasKey("Id");
+                    b.HasKey("EquipmentNo");
 
                     b.ToTable("EquipmentHourlyRates");
                 });
@@ -82,8 +76,9 @@ namespace LabCMS.EquipmentUsageRecord.Server.Migrations
                     b.Property<DateTimeOffset>("EndTime")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("EquipmentNo")
-                        .HasColumnType("integer");
+                    b.Property<string>("EquipmentNo")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<int>("ProjectId")
                         .HasColumnType("integer");
@@ -111,7 +106,7 @@ namespace LabCMS.EquipmentUsageRecord.Server.Migrations
 
                     b.HasIndex("StartTime");
 
-                    b.ToTable("UsageRecord");
+                    b.ToTable("UsageRecords");
                 });
 
             modelBuilder.Entity("LabCMS.EquipmentUsageRecord.Shared.Models.UsageRecord", b =>

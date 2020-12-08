@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Npgsql;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LabCMS.EquipmentUsageRecord.Server.Repositories
 {
@@ -15,7 +16,7 @@ namespace LabCMS.EquipmentUsageRecord.Server.Repositories
         public DbSet<Project> Projects => Set<Project>();
         public DbSet<EquipmentHourlyRate> EquipmentHourlyRates => Set<EquipmentHourlyRate>();
         public DbSet<UsageRecord> UsageRecords => Set<UsageRecord>();
-        public DbSet<UsageRecord> UsageRecordsRecycleBin => Set<UsageRecord>();
+        //public DbSet<UsageRecord> UsageRecordsRecycleBin => Set<UsageRecord>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

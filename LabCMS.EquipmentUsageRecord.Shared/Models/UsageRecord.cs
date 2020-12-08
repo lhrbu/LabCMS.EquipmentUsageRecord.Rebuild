@@ -18,7 +18,7 @@ namespace LabCMS.EquipmentUsageRecord.Shared.Models
         public string TestNo { get; set; } = null!;
 
         [ForeignKey(nameof(EquipmentHourlyRate))]
-        public int EquipmentNo { get; set; }
+        public string EquipmentNo { get; set; } =null!;
         public EquipmentHourlyRate EquipmentHourlyRate { get; set; } = null!;
         public string? TestType { get; set; }
 
@@ -30,5 +30,9 @@ namespace LabCMS.EquipmentUsageRecord.Shared.Models
         public DateTimeOffset StartTime { get; set; }
         [JsonConverter(typeof(JsonConverters.DateTimeOffsetJsonConverter))]
         public DateTimeOffset EndTime { get; set; }
+
+        [JsonIgnore]
+        [NotMapped]
+        public double Duration => (EndTime-StartTime).TotalHours;
     }
 }

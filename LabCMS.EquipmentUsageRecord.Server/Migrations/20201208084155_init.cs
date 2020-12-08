@@ -12,8 +12,6 @@ namespace LabCMS.EquipmentUsageRecord.Server.Migrations
                 name: "EquipmentHourlyRates",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     EquipmentNo = table.Column<string>(type: "text", nullable: false),
                     EquipmentName = table.Column<string>(type: "text", nullable: false),
                     MachineCategory = table.Column<string>(type: "text", nullable: false),
@@ -21,7 +19,7 @@ namespace LabCMS.EquipmentUsageRecord.Server.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_EquipmentHourlyRates", x => x.Id);
+                    table.PrimaryKey("PK_EquipmentHourlyRates", x => x.EquipmentNo);
                 });
 
             migrationBuilder.CreateTable(
@@ -40,14 +38,14 @@ namespace LabCMS.EquipmentUsageRecord.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UsageRecord",
+                name: "UsageRecords",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     User = table.Column<string>(type: "text", nullable: false),
                     TestNo = table.Column<string>(type: "text", nullable: false),
-                    EquipmentNo = table.Column<int>(type: "integer", nullable: false),
+                    EquipmentNo = table.Column<string>(type: "text", nullable: false),
                     TestType = table.Column<string>(type: "text", nullable: true),
                     ProjectId = table.Column<int>(type: "integer", nullable: false),
                     StartTime = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
@@ -55,15 +53,15 @@ namespace LabCMS.EquipmentUsageRecord.Server.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UsageRecord", x => x.Id);
+                    table.PrimaryKey("PK_UsageRecords", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_UsageRecord_EquipmentHourlyRates_EquipmentNo",
+                        name: "FK_UsageRecords_EquipmentHourlyRates_EquipmentNo",
                         column: x => x.EquipmentNo,
                         principalTable: "EquipmentHourlyRates",
-                        principalColumn: "Id",
+                        principalColumn: "EquipmentNo",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UsageRecord_Projects_ProjectId",
+                        name: "FK_UsageRecords_Projects_ProjectId",
                         column: x => x.ProjectId,
                         principalTable: "Projects",
                         principalColumn: "Id",
@@ -76,26 +74,26 @@ namespace LabCMS.EquipmentUsageRecord.Server.Migrations
                 column: "FullName");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UsageRecord_EquipmentNo",
-                table: "UsageRecord",
+                name: "IX_UsageRecords_EquipmentNo",
+                table: "UsageRecords",
                 column: "EquipmentNo")
                 .Annotation("Npgsql:IndexInclude", new[] { "TestType" });
 
             migrationBuilder.CreateIndex(
-                name: "IX_UsageRecord_ProjectId",
-                table: "UsageRecord",
+                name: "IX_UsageRecords_ProjectId",
+                table: "UsageRecords",
                 column: "ProjectId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UsageRecord_StartTime",
-                table: "UsageRecord",
+                name: "IX_UsageRecords_StartTime",
+                table: "UsageRecords",
                 column: "StartTime");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "UsageRecord");
+                name: "UsageRecords");
 
             migrationBuilder.DropTable(
                 name: "EquipmentHourlyRates");

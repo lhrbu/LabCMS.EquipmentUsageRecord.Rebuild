@@ -10,7 +10,6 @@ namespace LabCMS.EquipmentUsageRecord.Shared.Models
     public class EquipmentHourlyRate
     {
         [Key]
-        public int Id { get; set; }
         public string EquipmentNo { get; set; } = null!;
         public string EquipmentName { get; set; } = null!;
         public string MachineCategory { get; set; } = null!;
