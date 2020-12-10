@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LabCMS.EquipmentUsageRecord.Server.Migrations
 {
     [DbContext(typeof(UsageRecordsRepository))]
-    [Migration("20201208135344_init")]
+    [Migration("20201210123702_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -19,7 +19,7 @@ namespace LabCMS.EquipmentUsageRecord.Server.Migrations
             modelBuilder
                 .UseIdentityByDefaultColumns()
                 .HasAnnotation("Relational:MaxIdentifierLength", 63)
-                .HasAnnotation("ProductVersion", "5.0.0");
+                .HasAnnotation("ProductVersion", "5.0.1");
 
             modelBuilder.Entity("LabCMS.EquipmentUsageRecord.Shared.Models.EquipmentHourlyRate", b =>
                 {
@@ -90,6 +90,9 @@ namespace LabCMS.EquipmentUsageRecord.Server.Migrations
                     b.Property<string>("TestType")
                         .HasColumnType("text");
 
+                    b.Property<Guid>("UniqueToken")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("User")
                         .IsRequired()
                         .HasColumnType("text");
@@ -102,6 +105,9 @@ namespace LabCMS.EquipmentUsageRecord.Server.Migrations
                     b.HasIndex("ProjectNo");
 
                     b.HasIndex("StartTime");
+
+                    b.HasIndex("UniqueToken")
+                        .IsUnique();
 
                     b.ToTable("UsageRecords");
                 });

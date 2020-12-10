@@ -41,6 +41,7 @@ namespace LabCMS.EquipmentUsageRecord.Server.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UniqueToken = table.Column<Guid>(type: "uuid", nullable: false),
                     User = table.Column<string>(type: "text", nullable: false),
                     TestNo = table.Column<string>(type: "text", nullable: false),
                     EquipmentNo = table.Column<string>(type: "text", nullable: false),
@@ -86,6 +87,12 @@ namespace LabCMS.EquipmentUsageRecord.Server.Migrations
                 name: "IX_UsageRecords_StartTime",
                 table: "UsageRecords",
                 column: "StartTime");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UsageRecords_UniqueToken",
+                table: "UsageRecords",
+                column: "UniqueToken",
+                unique: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

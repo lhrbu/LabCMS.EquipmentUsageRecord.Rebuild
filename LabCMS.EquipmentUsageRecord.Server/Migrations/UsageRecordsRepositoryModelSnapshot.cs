@@ -17,7 +17,7 @@ namespace LabCMS.EquipmentUsageRecord.Server.Migrations
             modelBuilder
                 .UseIdentityByDefaultColumns()
                 .HasAnnotation("Relational:MaxIdentifierLength", 63)
-                .HasAnnotation("ProductVersion", "5.0.0");
+                .HasAnnotation("ProductVersion", "5.0.1");
 
             modelBuilder.Entity("LabCMS.EquipmentUsageRecord.Shared.Models.EquipmentHourlyRate", b =>
                 {
@@ -88,6 +88,9 @@ namespace LabCMS.EquipmentUsageRecord.Server.Migrations
                     b.Property<string>("TestType")
                         .HasColumnType("text");
 
+                    b.Property<Guid>("UniqueToken")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("User")
                         .IsRequired()
                         .HasColumnType("text");
@@ -100,6 +103,9 @@ namespace LabCMS.EquipmentUsageRecord.Server.Migrations
                     b.HasIndex("ProjectNo");
 
                     b.HasIndex("StartTime");
+
+                    b.HasIndex("UniqueToken")
+                        .IsUnique();
 
                     b.ToTable("UsageRecords");
                 });

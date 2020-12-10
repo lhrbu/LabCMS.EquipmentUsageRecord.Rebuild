@@ -14,6 +14,9 @@ namespace LabCMS.EquipmentUsageRecord.Shared.Models
     {
         [Key]
         public int Id { get; set; }
+
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public Guid UniqueToken { get; set; }
         public string User { get; set; } = null!;
         public string TestNo { get; set; } = null!;
 

@@ -1,4 +1,5 @@
 using LabCMS.EquipmentUsageRecord.Server.Repositories;
+using LabCMS.EquipmentUsageRecord.Server.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -37,6 +38,7 @@ namespace LabCMS.EquipmentUsageRecord.Server
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "LabCMS.EquipmentUsageRecord.Server", Version = "v1" });
             });
+            services.AddSingleton<UsageRecordSoftDeleteLogService>();
             services.AddDbContextPool<UsageRecordsRepository>(options =>
             {
                 options.UseNpgsql(Configuration.GetConnectionString(nameof(UsageRecordsRepository)));

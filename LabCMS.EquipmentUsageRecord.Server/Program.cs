@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Serilog;
 
 namespace LabCMS.EquipmentUsageRecord.Server
 {
@@ -15,6 +16,7 @@ namespace LabCMS.EquipmentUsageRecord.Server
         {
             CreateHostBuilder(args).Build().Run();
         }
+        
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
