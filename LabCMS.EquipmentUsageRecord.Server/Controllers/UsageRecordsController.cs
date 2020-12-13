@@ -44,15 +44,6 @@ namespace LabCMS.EquipmentUsageRecord.Server.Controllers
         [HttpDelete]
         public async ValueTask DeleteById(int id)
         {
-            //await _repository.Database.BeginTransactionAsync(IsolationLevel.Serializable);
-            //UsageRecord? usageRecord = await _repository.UsageRecords.FindAsync(id);
-            //if(usageRecord is not null)
-            //{
-            //    _repository.UsageRecords.Remove(usageRecord);
-            //    await _repository.Database.CommitTransactionAsync();
-            //    _softDeleteLogService.Logger.Information("{UsageRecord}", usageRecord);
-            //}
-            //else { await _repository.Database.CommitTransactionAsync(); }
             UsageRecord? usageRecord = await _repository.UsageRecords.FindAsync(id);
             if (usageRecord is not null)
             {
