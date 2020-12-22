@@ -40,8 +40,6 @@ namespace LabCMS.EquipmentUsageRecord.Server.Repositories
 
             modelBuilder.Entity<Project>()
                 .HasIndex(item => item.FullName);
-
-            
         }
         
     }

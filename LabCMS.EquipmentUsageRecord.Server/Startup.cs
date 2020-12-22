@@ -9,6 +9,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Polly;
+using Polly.Registry;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -42,8 +44,16 @@ namespace LabCMS.EquipmentUsageRecord.Server
             services.AddDbContextPool<UsageRecordsRepository>(options =>
             {
                 options.UseNpgsql(Configuration.GetConnectionString(nameof(UsageRecordsRepository)));
+                options.UseSnakeCaseNamingConvention();
                 options.LogTo(PostDbLog, LogLevel.Information).EnableSensitiveDataLogging();
             },256);
+
+            services.AddSingleton<BulkheadFilter>();
+            PolicyRegistry policyRegistry = new()
+            {
+                { nameof(BulkheadFilter),Policy.BulkheadAsync(128,4)}
+            };
+            services.AddSingleton<IReadOnlyPolicyRegistry<string>>(policyRegistry);
         }
 
         
