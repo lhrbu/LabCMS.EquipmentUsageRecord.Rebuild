@@ -10,6 +10,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Polly;
+using Polly.Bulkhead;
 using Polly.Registry;
 using System;
 using System.Collections.Generic;
@@ -36,10 +37,8 @@ namespace LabCMS.EquipmentUsageRecord.Server
         {
 
             services.AddControllers().AddJsonOptions(options=>options.JsonSerializerOptions.PropertyNamingPolicy=null);
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "LabCMS.EquipmentUsageRecord.Server", Version = "v1" });
-            });
+            services.AddSwaggerGen(c =>c.SwaggerDoc("v1", new OpenApiInfo { Title = "LabCMS.EquipmentUsageRecord.Server", Version = "v1" }));
+            
             services.AddSingleton<UsageRecordSoftDeleteLogService>();
             services.AddDbContextPool<UsageRecordsRepository>(options =>
             {
@@ -48,12 +47,7 @@ namespace LabCMS.EquipmentUsageRecord.Server
                 options.LogTo(PostDbLog, LogLevel.Information).EnableSensitiveDataLogging();
             },256);
 
-            services.AddSingleton<BulkheadFilter>();
-            PolicyRegistry policyRegistry = new()
-            {
-                { nameof(BulkheadFilter),Policy.BulkheadAsync(128,4)}
-            };
-            services.AddSingleton<IReadOnlyPolicyRegistry<string>>(policyRegistry);
+            services.AddBulkheadRetryAsyncFilter();
         }
 
         

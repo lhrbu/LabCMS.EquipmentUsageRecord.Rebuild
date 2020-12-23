@@ -14,6 +14,7 @@ namespace LabCMS.EquipmentUsageRecord.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [ServiceFilter(typeof(BulkheadRetryAsyncFilter))]
     public class UsageRecordsController : ControllerBase
     {
         private readonly UsageRecordsRepository _repository;

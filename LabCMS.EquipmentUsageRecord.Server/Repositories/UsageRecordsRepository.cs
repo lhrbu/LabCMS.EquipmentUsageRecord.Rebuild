@@ -24,9 +24,6 @@ namespace LabCMS.EquipmentUsageRecord.Server.Repositories
             modelBuilder.Entity<UsageRecord>()
                 .HasIndex(item => item.ProjectNo);
             modelBuilder.Entity<UsageRecord>()
-                .HasIndex(item => item.UniqueToken)
-                .IsUnique();
-            modelBuilder.Entity<UsageRecord>()
                 .HasIndex(item => item.EquipmentNo)
                 .IncludeProperties(item=>item.TestType);
             modelBuilder.Entity<UsageRecord>()

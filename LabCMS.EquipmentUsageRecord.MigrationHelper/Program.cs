@@ -19,7 +19,6 @@ namespace LabCMS.EquipmentUsageRecord.MigrationHelper
             
             var usageRecords = archiveRecords.Select(item => new UsageRecord
             {
-                UniqueToken = item.Id!.Value,
                 User = item.User!,
                 TestNo = item.TestNo!,
                 EquipmentNo = item.EquipmentNo!,

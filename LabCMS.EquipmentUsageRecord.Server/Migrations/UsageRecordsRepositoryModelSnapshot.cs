@@ -22,42 +22,52 @@ namespace LabCMS.EquipmentUsageRecord.Server.Migrations
             modelBuilder.Entity("LabCMS.EquipmentUsageRecord.Shared.Models.EquipmentHourlyRate", b =>
                 {
                     b.Property<string>("EquipmentNo")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("equipment_no");
 
                     b.Property<string>("EquipmentName")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("equipment_name");
 
                     b.Property<string>("HourlyRate")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("hourly_rate");
 
                     b.Property<string>("MachineCategory")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("machine_category");
 
-                    b.HasKey("EquipmentNo");
+                    b.HasKey("EquipmentNo")
+                        .HasName("pk_equipment_hourly_rates");
 
-                    b.ToTable("EquipmentHourlyRates");
+                    b.ToTable("equipment_hourly_rates");
                 });
 
             modelBuilder.Entity("LabCMS.EquipmentUsageRecord.Shared.Models.Project", b =>
                 {
                     b.Property<string>("No")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("no");
 
                     b.Property<string>("FullName")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("full_name");
 
                     b.Property<string>("Name")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("name");
 
-                    b.HasKey("No");
+                    b.HasKey("No")
+                        .HasName("pk_projects");
 
-                    b.HasIndex("FullName");
+                    b.HasIndex("FullName")
+                        .HasDatabaseName("ix_projects_full_name");
 
-                    b.ToTable("Projects");
+                    b.ToTable("projects");
                 });
 
             modelBuilder.Entity("LabCMS.EquipmentUsageRecord.Shared.Models.UsageRecord", b =>
@@ -65,49 +75,59 @@ namespace LabCMS.EquipmentUsageRecord.Server.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
+                        .HasColumnName("id")
                         .UseIdentityByDefaultColumn();
 
                     b.Property<long>("EndTime")
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("end_time");
 
                     b.Property<string>("EquipmentNo")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("equipment_no");
 
                     b.Property<string>("ProjectNo")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("project_no");
 
                     b.Property<long>("StartTime")
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("start_time");
 
                     b.Property<string>("TestNo")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("test_no");
 
                     b.Property<string>("TestType")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("test_type");
 
                     b.Property<Guid>("UniqueToken")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("unique_token");
 
                     b.Property<string>("User")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("user");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_usage_records");
 
                     b.HasIndex("EquipmentNo")
+                        .HasDatabaseName("ix_usage_records_equipment_no")
                         .IncludeProperties(new[] { "TestType" });
 
-                    b.HasIndex("ProjectNo");
+                    b.HasIndex("ProjectNo")
+                        .HasDatabaseName("ix_usage_records_project_no");
 
-                    b.HasIndex("StartTime");
+                    b.HasIndex("StartTime")
+                        .HasDatabaseName("ix_usage_records_start_time");
 
-                    b.HasIndex("UniqueToken")
-                        .IsUnique();
-
-                    b.ToTable("UsageRecords");
+                    b.ToTable("usage_records");
                 });
 
             modelBuilder.Entity("LabCMS.EquipmentUsageRecord.Shared.Models.UsageRecord", b =>
@@ -115,12 +135,14 @@ namespace LabCMS.EquipmentUsageRecord.Server.Migrations
                     b.HasOne("LabCMS.EquipmentUsageRecord.Shared.Models.EquipmentHourlyRate", "EquipmentHourlyRate")
                         .WithMany()
                         .HasForeignKey("EquipmentNo")
+                        .HasConstraintName("fk_usage_records_equipment_hourly_rates_equipment_no")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("LabCMS.EquipmentUsageRecord.Shared.Models.Project", "Project")
                         .WithMany()
                         .HasForeignKey("ProjectNo")
+                        .HasConstraintName("fk_usage_records_projects_project_no")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

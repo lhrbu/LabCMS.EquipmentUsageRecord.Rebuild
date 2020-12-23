@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Data;
 using System.Threading.Tasks;
+using LabCMS.EquipmentUsageRecord.Server.Services;
 
 namespace LabCMS.EquipmentUsageRecord.Server.Controllers
 {
