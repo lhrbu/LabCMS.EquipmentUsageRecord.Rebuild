@@ -36,7 +36,8 @@ namespace LabCMS.EquipmentUsageRecord.Server.Repositories
                 .HasConversion(EFCoreValueConverters.DataTimeOffsetUtcSecondsConverter);
 
             modelBuilder.Entity<Project>()
-                .HasIndex(item => item.FullName);
+                .HasIndex(item => item.FullName)
+                .IsUnique();
         }
         
     }

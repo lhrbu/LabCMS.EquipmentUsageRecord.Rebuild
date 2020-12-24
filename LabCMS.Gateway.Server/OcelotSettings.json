@@ -1,0 +1,114 @@
+{
+  "Routes": [
+    {
+      "UpStreamPathTemplate": "/api/Projects",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+      "ServiceName": "ProjectDomain",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "DownstreamPathTemplate": "/api/Projects",
+      "DownstreamScheme": "http"
+    },
+
+    {
+      "UpStreamPathTemplate": "/api/Projects/{others}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+      "ServiceName": "ProjectDomain",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "DownstreamPathTemplate": "/api/Projects/{others}",
+      "DownstreamScheme": "http"
+    },
+
+    {
+      "UpStreamPathTemplate": "/api/Fixtures",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+
+      "ServiceName": "FixtureDomain",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "DownstreamPathTemplate": "/api/Fixtures",
+      "DownstreamScheme": "http"
+    },
+
+    {
+      "UpStreamPathTemplate": "/api/Fixtures/DynamicQuery",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+
+      "ServiceName": "FixtureDomain",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "DownstreamPathTemplate": "/api/Fixtures/DynamicQuery",
+      "DownstreamScheme": "http"
+    },
+
+    {
+      "UpStreamPathTemplate": "/api/EquipmentHourlyRates",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+
+      "ServiceName": "EquipmentDomain",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "DownstreamPathTemplate": "/api/EquipmentHourlyRates",
+      "DownstreamScheme": "http"
+    },
+    {
+      "UpStreamPathTemplate": "/api/EquipmentHourlyRates/{others}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+
+      "ServiceName": "EquipmentDomain",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "DownstreamPathTemplate": "/api/EquipmentHourlyRates/{others}",
+      "DownstreamScheme": "http"
+    },
+    {
+      "UpStreamPathTemplate": "/api/UsageRecords",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+
+      "ServiceName": "EquipmentDomain",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "DownstreamPathTemplate": "/api/UsageRecords",
+      "DownstreamScheme": "http"
+    },
+    {
+      "UpStreamPathTemplate": "/api/UsageRecords/{others}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+
+      "ServiceName": "EquipmentDomain",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "DownstreamPathTemplate": "/api/UsageRecords/{others}",
+      "DownstreamScheme": "http"
+    },
+    {
+      "UpStreamPathTemplate": "/api/ElasticSearch",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+
+      "ServiceName": "EquipmentDomain",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "DownstreamPathTemplate": "/api/ElasticSearch",
+      "DownstreamScheme": "http"
+    }
+  ],
+
+  "GlobalConfiguration": {
+    "ServiceDiscoveryProvider": {
+      "Scheme": "http",
+      "Host": "localhost",
+      "Port": 8500,
+      "Type": "Consul"
+    }
+  }
+}
