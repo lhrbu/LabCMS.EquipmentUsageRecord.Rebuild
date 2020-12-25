@@ -65,6 +65,7 @@ namespace LabCMS.EquipmentUsageRecord.Server.Migrations
                         .HasName("pk_projects");
 
                     b.HasIndex("FullName")
+                        .IsUnique()
                         .HasDatabaseName("ix_projects_full_name");
 
                     b.ToTable("projects");
@@ -104,10 +105,6 @@ namespace LabCMS.EquipmentUsageRecord.Server.Migrations
                     b.Property<string>("TestType")
                         .HasColumnType("text")
                         .HasColumnName("test_type");
-
-                    b.Property<Guid>("UniqueToken")
-                        .HasColumnType("uuid")
-                        .HasColumnName("unique_token");
 
                     b.Property<string>("User")
                         .IsRequired()

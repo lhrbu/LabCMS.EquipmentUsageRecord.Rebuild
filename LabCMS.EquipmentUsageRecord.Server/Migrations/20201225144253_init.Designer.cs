@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LabCMS.EquipmentUsageRecord.Server.Migrations
 {
     [DbContext(typeof(UsageRecordsRepository))]
-    [Migration("20201223132006_init")]
+    [Migration("20201225144253_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -67,6 +67,7 @@ namespace LabCMS.EquipmentUsageRecord.Server.Migrations
                         .HasName("pk_projects");
 
                     b.HasIndex("FullName")
+                        .IsUnique()
                         .HasDatabaseName("ix_projects_full_name");
 
                     b.ToTable("projects");
@@ -106,10 +107,6 @@ namespace LabCMS.EquipmentUsageRecord.Server.Migrations
                     b.Property<string>("TestType")
                         .HasColumnType("text")
                         .HasColumnName("test_type");
-
-                    b.Property<Guid>("UniqueToken")
-                        .HasColumnType("uuid")
-                        .HasColumnName("unique_token");
 
                     b.Property<string>("User")
                         .IsRequired()

@@ -1,5 +1,6 @@
 using LabCMS.EquipmentUsageRecord.Server.Repositories;
 using LabCMS.EquipmentUsageRecord.Server.Services;
+using LabCMS.Gateway.Shared.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -47,6 +48,7 @@ namespace LabCMS.EquipmentUsageRecord.Server
                 options.LogTo(PostDbLog, LogLevel.Information).EnableSensitiveDataLogging();
             },256);
 
+            services.AddSingleton<ElasticSearchInteropService>();
             services.AddBulkheadRetryAsyncFilter();
         }
 
@@ -73,6 +75,11 @@ namespace LabCMS.EquipmentUsageRecord.Server
             {
                 endpoints.MapControllers();
             });
+
+            if (!env.IsDevelopment())
+            {
+                app.UseConsulAsServiceProvider(nameof(EquipmentUsageRecord));
+            }
         }
 
 

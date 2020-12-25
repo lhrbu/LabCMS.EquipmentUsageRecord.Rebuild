@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Serilog;
+using Nest;
 
 namespace LabCMS.EquipmentUsageRecord.Server
 {
@@ -14,6 +15,7 @@ namespace LabCMS.EquipmentUsageRecord.Server
     {
         public static void Main(string[] args)
         {
+            var client = new ElasticClient(new Uri("http://localhost:9200"));
             CreateHostBuilder(args).Build().Run();
         }
         

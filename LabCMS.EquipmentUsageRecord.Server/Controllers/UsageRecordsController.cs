@@ -19,12 +19,15 @@ namespace LabCMS.EquipmentUsageRecord.Server.Controllers
     {
         private readonly UsageRecordsRepository _repository;
         private readonly UsageRecordSoftDeleteLogService _softDeleteLogService;
+        private readonly ElasticSearchInteropService _elasticSearch;
         public UsageRecordsController(
             UsageRecordsRepository repository,
-            UsageRecordSoftDeleteLogService softDeleteLogService)
+            UsageRecordSoftDeleteLogService softDeleteLogService,
+            ElasticSearchInteropService elasticSearch)
         { 
             _repository = repository;
             _softDeleteLogService = softDeleteLogService;
+            _elasticSearch = elasticSearch;
         }
         [HttpGet]
         public IAsyncEnumerable<UsageRecord> GetAsync() =>
@@ -32,6 +35,7 @@ namespace LabCMS.EquipmentUsageRecord.Server.Controllers
         [HttpPost]
         public async ValueTask PostAsync(UsageRecord usageRecord)
         {
+            _ = _elasticSearch.IndexAsync(usageRecord).ConfigureAwait(false);
             await _repository.UsageRecords.AddAsync(usageRecord);
             await _repository.SaveChangesAsync();
         }
@@ -39,6 +43,7 @@ namespace LabCMS.EquipmentUsageRecord.Server.Controllers
         [HttpPut]
         public async ValueTask PutAsync(UsageRecord usageRecord)
         {
+            _ = _elasticSearch.IndexAsync(usageRecord).ConfigureAwait(false);
             _repository.UsageRecords.Update(usageRecord);
             await _repository.SaveChangesAsync();
         }
@@ -48,10 +53,41 @@ namespace LabCMS.EquipmentUsageRecord.Server.Controllers
             UsageRecord? usageRecord = await _repository.UsageRecords.FindAsync(id);
             if (usageRecord is not null)
             {
+                _ = _elasticSearch.RemoveByIdAsync(id).ConfigureAwait(false);
                 _repository.UsageRecords.Remove(usageRecord);
                 await _repository.SaveChangesAsync();
                 _softDeleteLogService.Logger.Information("{UsageRecord}", usageRecord);
             }
         }
+
+        [HttpPost("SyncWithElasticeSearch")]
+        public async ValueTask SyncWithElasticeSearchAsync()
+        {
+            IEnumerable<UsageRecord> usageRecords = _repository.UsageRecords.AsNoTracking();
+            IEnumerable<UsageRecord> usageRecordsInES = await _elasticSearch.SearchAllAsync();
+
+            UsageRecordIdEqualityComparer comparer = new();
+            IEnumerable<UsageRecord> recordsInESNeedToDelete = usageRecordsInES.Except(usageRecords,comparer);
+            IEnumerable<UsageRecord> recordsNeedToAddToES = usageRecords.Except(usageRecordsInES,comparer);
+
+            if (recordsInESNeedToDelete.Any())
+            {
+                await _elasticSearch.RemoveManyAsync(recordsInESNeedToDelete);
+            }
+            if (recordsNeedToAddToES.Any())
+            {
+                await _elasticSearch.IndexManyAsync(recordsNeedToAddToES);
+            }
+        }
+    }
+
+    public class UsageRecordIdEqualityComparer : IEqualityComparer<UsageRecord>
+    {
+        public bool Equals(UsageRecord? x, UsageRecord? y)
+        {
+            if ((x is null) && (y is null)) { return false; }
+            else { return x?.Id == y?.Id; }
+        }
+        public int GetHashCode(UsageRecord obj) => obj.Id.GetHashCode();
     }
 }

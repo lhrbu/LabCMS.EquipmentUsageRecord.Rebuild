@@ -41,7 +41,6 @@ namespace LabCMS.EquipmentUsageRecord.Server.Migrations
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    unique_token = table.Column<Guid>(type: "uuid", nullable: false),
                     user = table.Column<string>(type: "text", nullable: false),
                     test_no = table.Column<string>(type: "text", nullable: false),
                     equipment_no = table.Column<string>(type: "text", nullable: false),
@@ -70,7 +69,8 @@ namespace LabCMS.EquipmentUsageRecord.Server.Migrations
             migrationBuilder.CreateIndex(
                 name: "ix_projects_full_name",
                 table: "projects",
-                column: "full_name");
+                column: "full_name",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "ix_usage_records_equipment_no",
