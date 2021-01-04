@@ -18,7 +18,6 @@ namespace LabCMS.EquipmentUsageRecord.Server.Repositories
         public DbSet<Project> Projects => Set<Project>();
         public DbSet<EquipmentHourlyRate> EquipmentHourlyRates => Set<EquipmentHourlyRate>();
         public DbSet<UsageRecord> UsageRecords => Set<UsageRecord>();
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<UsageRecord>()
