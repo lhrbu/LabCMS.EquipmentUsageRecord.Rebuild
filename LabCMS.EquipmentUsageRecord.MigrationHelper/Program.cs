@@ -23,7 +23,7 @@ namespace LabCMS.EquipmentUsageRecord.MigrationHelper
                 TestNo = item.TestNo!,
                 EquipmentNo = item.EquipmentNo!,
                 TestType = item.TestType,
-                ProjectNo = projects.First(p=>p.FullName==item.ProjectName).No,
+                ProjectNo = projects.First(p=>p.Name==item.ProjectName).No,
                 StartTime = item.StartTime!.Value,
                 EndTime = item.EndTime!.Value
             });

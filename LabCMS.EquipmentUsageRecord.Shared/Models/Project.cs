@@ -12,7 +12,7 @@ namespace LabCMS.EquipmentUsageRecord.Shared.Models
     {
         [Key]
         public string No { get; set; } = null!;
-        public string? Name { get; set; }
-        public string FullName { get; set; } = null!;
+        public string Name { get; set; } = null!;
+        public string NameInFIN { get; set; } = null!;
     }
 }

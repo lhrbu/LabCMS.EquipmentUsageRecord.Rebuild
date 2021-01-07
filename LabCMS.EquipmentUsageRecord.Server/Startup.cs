@@ -53,6 +53,7 @@ namespace LabCMS.EquipmentUsageRecord.Server
             services.AddSingleton<ElasticSearchInteropService>();
             services.AddSingleton<DbLogHandleService>();
             services.AddBulkheadRetryAsyncFilter();
+            services.AddTransient<SecretEncryptService>();
         }
 
         
