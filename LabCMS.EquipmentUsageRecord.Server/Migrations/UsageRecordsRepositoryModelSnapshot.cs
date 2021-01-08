@@ -52,21 +52,22 @@ namespace LabCMS.EquipmentUsageRecord.Server.Migrations
                         .HasColumnType("text")
                         .HasColumnName("no");
 
-                    b.Property<string>("FullName")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("full_name");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("text")
                         .HasColumnName("name");
+
+                    b.Property<string>("NameInFIN")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("name_in_fin");
 
                     b.HasKey("No")
                         .HasName("pk_projects");
 
-                    b.HasIndex("FullName")
+                    b.HasIndex("Name")
                         .IsUnique()
-                        .HasDatabaseName("ix_projects_full_name");
+                        .HasDatabaseName("ix_projects_name");
 
                     b.ToTable("projects");
                 });

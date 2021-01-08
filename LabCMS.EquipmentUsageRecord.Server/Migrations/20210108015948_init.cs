@@ -27,8 +27,8 @@ namespace LabCMS.EquipmentUsageRecord.Server.Migrations
                 columns: table => new
                 {
                     no = table.Column<string>(type: "text", nullable: false),
-                    name = table.Column<string>(type: "text", nullable: true),
-                    full_name = table.Column<string>(type: "text", nullable: false)
+                    name = table.Column<string>(type: "text", nullable: false),
+                    name_in_fin = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -67,9 +67,9 @@ namespace LabCMS.EquipmentUsageRecord.Server.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "ix_projects_full_name",
+                name: "ix_projects_name",
                 table: "projects",
-                column: "full_name",
+                column: "name",
                 unique: true);
 
             migrationBuilder.CreateIndex(

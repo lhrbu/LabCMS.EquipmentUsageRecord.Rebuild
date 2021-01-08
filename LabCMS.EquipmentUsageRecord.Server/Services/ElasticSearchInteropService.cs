@@ -22,6 +22,7 @@ namespace LabCMS.EquipmentUsageRecord.Server.Services
             _logger = new LoggerConfiguration()
                .MinimumLevel.Information()
                .WriteTo.File("es.log")
+               .WriteTo.Console()
                .CreateLogger();
         }
         public async ValueTask IndexAsync(UsageRecord usageRecord) =>
