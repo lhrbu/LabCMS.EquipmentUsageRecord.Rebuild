@@ -40,7 +40,7 @@ namespace LabCMS.EquipmentUsageRecord.Server.Services
             string assemblyId =Guid.NewGuid().ToString().Replace('-','_');
             string code =
 $@"
-using LabCMS.EquipmentDomain.Shared.Models;
+using LabCMS.EquipmentUsageRecord.Shared.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -48,7 +48,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace LabCMS.EquipmentDomain.Temp_{assemblyId}
+namespace LabCMS.EquipmentUsageRecord.Temp_{assemblyId}
 {{
     public class DynamicQuereInstance
     {{
@@ -61,7 +61,7 @@ namespace LabCMS.EquipmentDomain.Temp_{assemblyId}
 ";
             Assembly tempAssembly = Compile($"AssemblyTemp{assemblyId}",code,
                 AssemblyLoadContext.Default.Assemblies.Where(assembly=>!assembly.IsDynamic).ToArray());
-            Type instanceType = tempAssembly.GetType($"LabCMS.EquipmentDomain.Temp_{assemblyId}.DynamicQuereInstance")!;
+            Type instanceType = tempAssembly.GetType($"LabCMS.EquipmentUsageRecord.Temp_{assemblyId}.DynamicQuereInstance")!;
             dynamic instance = Activator.CreateInstance(instanceType)!;
             dynamic result = instance.DynamicQuery(_usageRecordsRepository.UsageRecords
                 .Include(item=>item.Project)
