@@ -35,11 +35,12 @@ namespace LabCMS.EquipmentUsageRecord.Server.Controllers
             _repository.EquipmentHourlyRates.Update(equipmentHourlyRate);
             await _repository.SaveChangesAsync();
         }
-        [HttpDelete]
-        public async ValueTask DeleteByNoAsync(string equipmentNo)
+        [HttpDelete("{equipmentNo}")]
+        public async ValueTask<IActionResult> DeleteByNoAsync(string equipmentNo)
         {
+            string decodedEquipmentNo = System.Web.HttpUtility.UrlDecode(equipmentNo);
             EquipmentHourlyRate? equipmentHourlyRate = await 
-                _repository.EquipmentHourlyRates.FindAsync(equipmentNo);
+                _repository.EquipmentHourlyRates.FindAsync(decodedEquipmentNo);
             if(equipmentHourlyRate is not null)
             {
                 await _repository.Database.BeginTransactionAsync(IsolationLevel.Serializable);
@@ -48,7 +49,10 @@ namespace LabCMS.EquipmentUsageRecord.Server.Controllers
                     _repository.EquipmentHourlyRates.Remove(equipmentHourlyRate);
                 }
                 await _repository.Database.CommitTransactionAsync();
+                await _repository.SaveChangesAsync();
+                return Ok();
             }
+            else { return NotFound(); }
         }
     }
 }

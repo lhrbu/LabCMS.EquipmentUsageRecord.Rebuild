@@ -4,7 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Json;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace LabCMS.EquipmentUsageRecord.MigrationHelper
 {
@@ -30,6 +33,13 @@ namespace LabCMS.EquipmentUsageRecord.MigrationHelper
             using Stream outputStream = File.OpenWrite("output.json");
             JsonSerializer.SerializeAsync<IEnumerable<UsageRecord>>(outputStream, usageRecords,
                 new() { WriteIndented = true });
+            SendToDbAsync(usageRecords).Wait();
+        }
+
+        static async Task SendToDbAsync(IEnumerable<UsageRecord> usageRecords)
+        {
+            using HttpClient httpClient = new();
+            await httpClient.PostAsJsonAsync("http://localhost:5000/api/UsageRecords/Many", usageRecords);
         }
     }
 }

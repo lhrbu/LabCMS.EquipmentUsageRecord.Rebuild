@@ -36,19 +36,23 @@ namespace LabCMS.EquipmentUsageRecord.Server.Controllers
             await _repository.SaveChangesAsync();
         }
 
-        [HttpDelete]
-        public async ValueTask DeleteByNo(string projectNo)
+        [HttpDelete("{projectName}")]
+        public async ValueTask<IActionResult> DeleteByName(string projectName)
         {
-            Project? project = await _repository.Projects.FindAsync(projectNo);
+            string decodedProjectName = System.Web.HttpUtility.UrlDecode(projectName);
+            Project? project = await _repository.Projects.FirstOrDefaultAsync(item => item.Name == decodedProjectName);
             if(project is not null)
             {
                 await _repository.Database.BeginTransactionAsync(IsolationLevel.Serializable);
-                if(!await _repository.UsageRecords.AnyAsync(item=>item.ProjectNo==projectNo))
+                if(!await _repository.UsageRecords.AnyAsync(item=>item.ProjectNo==project.No))
                 {
                     _repository.Projects.Remove(project);
                 }
                 await _repository.Database.CommitTransactionAsync();
+                await _repository.SaveChangesAsync();
+                return Ok();
             }
+            else { return NotFound(); }
         }
     }
 }
