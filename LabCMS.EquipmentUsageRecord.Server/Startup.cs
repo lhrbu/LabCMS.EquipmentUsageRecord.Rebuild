@@ -54,6 +54,8 @@ namespace LabCMS.EquipmentUsageRecord.Server
             services.AddSingleton<DbLogHandleService>();
             services.AddBulkheadRetryAsyncFilter();
             services.AddTransient<SecretEncryptService>();
+            services.AddTransient<ExcelExportService>();
+            services.AddTransient<DynamicQueryService>();
         }
 
         

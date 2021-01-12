@@ -21,6 +21,7 @@ namespace LabCMS.EquipmentUsageRecord.Server
             //var service = host.Services.GetRequiredService<SecretEncryptService>();
             //var b64 = service.Encrypt("host=localhost:password=1234qwer");
             //var content = service.Decrypt(b64);
+            RegisterSyncfusion();
             CreateHostBuilder(args).Build().Run();
         }
         
@@ -31,5 +32,9 @@ namespace LabCMS.EquipmentUsageRecord.Server
                 {
                     webBuilder.UseStartup<Startup>();
                 });
+        
+        private static void RegisterSyncfusion()=>
+            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(
+                "MzgxNzI3QDMxMzgyZTM0MmUzMENtVFBCVzFIenlNM2pMNWszWHR6emFyU0M4SVM3MEN6cnZoV2NjTnVQMjQ9");
     }
 }

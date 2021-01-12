@@ -19,12 +19,12 @@ namespace LabCMS.EquipmentUsageRecord.Shared.Models
 
         [ForeignKey(nameof(EquipmentHourlyRate))]
         public string EquipmentNo { get; set; } =null!;
-        public EquipmentHourlyRate EquipmentHourlyRate { get; set; } = null!;
+        public EquipmentHourlyRate? EquipmentHourlyRate { get; set; }
         public string? TestType { get; set; }
 
         [ForeignKey(nameof(Project))]
         public string ProjectNo { get; set; } = null!;
-        public Project Project { get; set; } = null!;
+        public Project? Project { get; set; }
 
         [JsonConverter(typeof(JsonConverters.DateTimeOffsetJsonConverter))]
         public DateTimeOffset StartTime { get; set; }
