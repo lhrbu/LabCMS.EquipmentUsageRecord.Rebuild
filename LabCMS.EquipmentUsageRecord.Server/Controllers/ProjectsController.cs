@@ -3,6 +3,7 @@ using LabCMS.EquipmentUsageRecord.Shared.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Raccoon.Devkits.JwtAuthroization.Models;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -23,13 +24,16 @@ namespace LabCMS.EquipmentUsageRecord.Server.Controllers
         [HttpGet]
         public IAsyncEnumerable<Project> GetAsync() =>
             _repository.Projects.AsNoTracking().AsAsyncEnumerable();
+
         [HttpPost]
+        [CookieJwtPayloadRequirement("usage_records","role","admin")]
         public async ValueTask PostAsync(Project project)
         {
             await _repository.Projects.AddAsync(project);
             await _repository.SaveChangesAsync();
         }
         [HttpPut]
+        [CookieJwtPayloadRequirement("usage_records", "role", "admin")]
         public async ValueTask PutAsync(Project project)
         {
             _repository.Projects.Update(project);
@@ -37,6 +41,7 @@ namespace LabCMS.EquipmentUsageRecord.Server.Controllers
         }
 
         [HttpDelete("{projectName}")]
+        [CookieJwtPayloadRequirement("usage_records", "role", "admin")]
         public async ValueTask<IActionResult> DeleteByName(string projectName)
         {
             string decodedProjectName = System.Web.HttpUtility.UrlDecode(projectName);

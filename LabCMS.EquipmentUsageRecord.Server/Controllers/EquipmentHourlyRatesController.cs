@@ -9,6 +9,7 @@ using System.Linq;
 using System.Data;
 using System.Threading.Tasks;
 using LabCMS.EquipmentUsageRecord.Server.Services;
+using Raccoon.Devkits.JwtAuthroization.Models;
 
 namespace LabCMS.EquipmentUsageRecord.Server.Controllers
 {
@@ -24,18 +25,21 @@ namespace LabCMS.EquipmentUsageRecord.Server.Controllers
         public IAsyncEnumerable<EquipmentHourlyRate> GetAsync() =>
             _repository.EquipmentHourlyRates.AsNoTracking().AsAsyncEnumerable();
         [HttpPost]
+        [CookieJwtPayloadRequirement("usage_records", "role", "admin")]
         public async ValueTask PostAsync(EquipmentHourlyRate equipmentHourlyRate)
         {
             await _repository.EquipmentHourlyRates.AddAsync(equipmentHourlyRate);
             await _repository.SaveChangesAsync();
         }
         [HttpPut]
+        [CookieJwtPayloadRequirement("usage_records", "role", "admin")]
         public async ValueTask PutAsync(EquipmentHourlyRate equipmentHourlyRate)
         {
             _repository.EquipmentHourlyRates.Update(equipmentHourlyRate);
             await _repository.SaveChangesAsync();
         }
         [HttpDelete("{equipmentNo}")]
+        [CookieJwtPayloadRequirement("usage_records", "role", "admin")]
         public async ValueTask<IActionResult> DeleteByNoAsync(string equipmentNo)
         {
             string decodedEquipmentNo = System.Web.HttpUtility.UrlDecode(equipmentNo);

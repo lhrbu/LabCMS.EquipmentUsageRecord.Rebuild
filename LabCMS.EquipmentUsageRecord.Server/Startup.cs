@@ -13,6 +13,7 @@ using Microsoft.OpenApi.Models;
 using Polly;
 using Polly.Bulkhead;
 using Polly.Registry;
+using Raccoon.Devkits.JwtAuthorization;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -56,6 +57,7 @@ namespace LabCMS.EquipmentUsageRecord.Server
             services.AddTransient<SecretEncryptService>();
             services.AddTransient<ExcelExportService>();
             services.AddTransient<DynamicQueryService>();
+            services.AddJwtAuthorization();
         }
 
         
@@ -75,7 +77,8 @@ namespace LabCMS.EquipmentUsageRecord.Server
 
             app.UseRouting();
 
-            app.UseAuthorization();
+            //app.UseAuthorization();
+            app.UseCookieJwtAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
