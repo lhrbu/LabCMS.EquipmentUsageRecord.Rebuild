@@ -20,8 +20,8 @@ namespace LabCMS.EquipmentUsageRecord.Server.Controllers
         public DynamicQueryController(DynamicQueryService dynamicQueryService)
         { _dynamicQueryService = dynamicQueryService;}
 
-        [HttpGet]
-        public dynamic Get([FromBody]string codePiece)=>
+        [HttpPost]
+        public dynamic Post([FromBody]string codePiece)=>
             _dynamicQueryService.DynamicQuery(codePiece);
     }
 }
