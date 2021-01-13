@@ -1,3 +1,4 @@
+using LabCMS.EquipmentUsageRecord.Server.Proxies;
 using LabCMS.EquipmentUsageRecord.Server.Repositories;
 using LabCMS.EquipmentUsageRecord.Server.Services;
 using LabCMS.Gateway.Shared.Extensions;
@@ -13,6 +14,7 @@ using Microsoft.OpenApi.Models;
 using Polly;
 using Polly.Bulkhead;
 using Polly.Registry;
+using Raccoon.Devkits.DynamicProxy;
 using Raccoon.Devkits.JwtAuthorization;
 using System;
 using System.Collections.Generic;
@@ -51,7 +53,9 @@ namespace LabCMS.EquipmentUsageRecord.Server
                     LogLevel.Information).EnableSensitiveDataLogging();
             },256);
 
-            services.AddSingleton<ElasticSearchInteropService>();
+            //services.AddSingleton<ElasticSearchInteropService>();
+            services.AddSingletonProxy<IElasticSearchInteropService,
+                ElasticSearchInteropService, ElasticSearchInteropProxy>();
             services.AddSingleton<DbLogHandleService>();
             services.AddBulkheadRetryAsyncFilter();
             services.AddTransient<SecretEncryptService>();

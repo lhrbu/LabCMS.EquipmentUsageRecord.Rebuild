@@ -11,10 +11,10 @@ using System.Threading.Tasks;
 
 namespace LabCMS.EquipmentUsageRecord.Server.Services
 {
-    public class ElasticSearchInteropService
+    public class ElasticSearchInteropService:IElasticSearchInteropService
     {
         private readonly ElasticClient _elasticClient;
-        public string IndexName { get; } = "usagerecords-actual";
+        public string IndexName { get; } = "usagerecords-raw";
         public ElasticSearchInteropService(
             IConfiguration configuration)
         {

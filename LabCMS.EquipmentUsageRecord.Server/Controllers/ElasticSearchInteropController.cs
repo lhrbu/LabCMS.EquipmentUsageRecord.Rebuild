@@ -16,10 +16,10 @@ namespace LabCMS.EquipmentUsageRecord.Server.Controllers
     public class ElasticSearchInteropController : ControllerBase
     {
         private readonly UsageRecordsRepository _repository;
-        private readonly ElasticSearchInteropService _elasticSearch;
+        private readonly IElasticSearchInteropService _elasticSearch;
         public ElasticSearchInteropController(
             UsageRecordsRepository repository,
-            ElasticSearchInteropService elasticSearch)
+            IElasticSearchInteropService elasticSearch)
         {
             _repository = repository;
             _elasticSearch = elasticSearch;
