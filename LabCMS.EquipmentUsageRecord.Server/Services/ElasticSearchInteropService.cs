@@ -23,6 +23,15 @@ namespace LabCMS.EquipmentUsageRecord.Server.Services
                .MinimumLevel.Information()
                .WriteTo.File("es.log")
                .CreateLogger();
+            DeclareIndex(IndexName).AsTask().Wait();
+        }
+        public async ValueTask DeclareIndex(string indexName)
+        {
+            if(!(await _elasticClient.Indices.ExistsAsync(indexName)).Exists)
+            {
+                HandleResponse(await _elasticClient.Indices.CreateAsync(indexName,
+                    c => c.Map<UsageRecord>(i => i.AutoMap<UsageRecord>())));
+            }
         }
         public async ValueTask IndexAsync(UsageRecord usageRecord) =>
              HandleResponse(await _elasticClient.IndexAsync(usageRecord, item => item.Index(IndexName)));
