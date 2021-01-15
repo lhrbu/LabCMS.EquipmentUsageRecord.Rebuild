@@ -41,23 +41,17 @@ namespace LabCMS.EquipmentUsageRecord.UnitTest
         }
 
         [Fact]
-        public async ValueTask TestPutAsync()
+        public async Task TestPutAsync()
         {
             var controller = TestServerProvider.CreateController<ProjectsController>();
-            Project project = new() { No = "1394E.XXXYYYUpdate", Name = "TestProjectPut", NameInFIN = "TestProjectInFIN" };
+            Project project = new() { No = "1394E.XXXYYYUpdate", Name = Guid.NewGuid().ToString(), NameInFIN = "TestProjectInFIN" };
             await controller.PostAsync(project);
-            var projects = controller.GetAsync().ToEnumerable();
+            project.Name = Guid.NewGuid().ToString();
 
-            Project changedProject = new()
-            {
-                No = project.No,
-                Name = "TestProjectPutUpdated",
-                NameInFIN = project.NameInFIN
-            };
-            await controller.PutAsync(changedProject);
+            await controller.PutAsync(project);
             var projectsAfterPut = controller.GetAsync().ToEnumerable();
-            Assert.Equal(changedProject.Name, projectsAfterPut.First(item => item.No == changedProject.No).Name);
-
+            Assert.Equal(project.Name, projectsAfterPut.First(item => item.No == project.No).Name);
+            await controller.DeleteByName(project.Name);
         }
     }
 }

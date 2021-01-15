@@ -47,10 +47,13 @@ namespace LabCMS.EquipmentUsageRecord.Server.Controllers
         [HttpPost]
         public async ValueTask PostAsync(UsageRecord usageRecord)
         {
-            await _repository.UsageRecords.AddAsync(usageRecord);
-            await _repository.SaveChangesAsync();
-            await LoadReferences(usageRecord);
-            _ = _elasticSearch.IndexAsync(usageRecord).ConfigureAwait(false);
+            try
+            {
+                await _repository.UsageRecords.AddAsync(usageRecord);
+                await _repository.SaveChangesAsync();
+                await LoadReferences(usageRecord);
+                _ = _elasticSearch.IndexAsync(usageRecord).ConfigureAwait(false);
+            }catch(Exception e) { throw; }
             
         }
 

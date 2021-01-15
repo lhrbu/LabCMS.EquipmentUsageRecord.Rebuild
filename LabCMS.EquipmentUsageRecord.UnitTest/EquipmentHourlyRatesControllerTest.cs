@@ -13,7 +13,7 @@ namespace LabCMS.EquipmentUsageRecord.UnitTest
     public class EquipmentHourlyRatesControllerTest
     {
         [Fact]
-        public async ValueTask TestGetAsync()
+        public async Task TestGetAsync()
         {
             var controller = TestServerProvider.CreateController<EquipmentHourlyRatesController>();
             await foreach(var equipmentHourlyRate in controller.GetAsync())
@@ -21,7 +21,7 @@ namespace LabCMS.EquipmentUsageRecord.UnitTest
         }
 
         [Fact]
-        public async ValueTask TestPostAsync()
+        public async Task TestPostAsync()
         {
             var controller = TestServerProvider.CreateController<EquipmentHourlyRatesController>();
             EquipmentHourlyRate equipmentHourlyRate = new()
@@ -43,30 +43,23 @@ namespace LabCMS.EquipmentUsageRecord.UnitTest
         }
 
         [Fact]
-        public async ValueTask TestPutAsync()
+        public async Task TestPutAsync()
         {
             var controller = TestServerProvider.CreateController<EquipmentHourlyRatesController>();
             EquipmentHourlyRate equipmentHourlyRate = new()
             {
-                EquipmentName = "EQ1PutNAME",
+                EquipmentName = Guid.NewGuid().ToString(),
                 EquipmentNo = "EQ1Put",
                 HourlyRate = "A",
                 MachineCategory = "DPE1"
             };
             await controller.PostAsync(equipmentHourlyRate);
-            var items = controller.GetAsync().ToEnumerable();
-
-            EquipmentHourlyRate changedEquipment = new()
-            {
-                EquipmentName = "EQ1PutNameAfter",
-                EquipmentNo = equipmentHourlyRate.EquipmentNo,
-                HourlyRate = equipmentHourlyRate.HourlyRate,
-                MachineCategory = equipmentHourlyRate.MachineCategory
-            };
-            await controller.PutAsync(changedEquipment);
+            equipmentHourlyRate.EquipmentName = Guid.NewGuid().ToString();
+            await controller.PutAsync(equipmentHourlyRate);
             var itemsAfterPut = controller.GetAsync().ToEnumerable();
-            Assert.Equal(changedEquipment.EquipmentName, itemsAfterPut.First(item => item.EquipmentNo == changedEquipment.EquipmentNo)
+            Assert.Equal(equipmentHourlyRate.EquipmentName, itemsAfterPut.First(item => item.EquipmentNo == equipmentHourlyRate.EquipmentNo)
                 .EquipmentName);
+            await controller.DeleteByNoAsync(equipmentHourlyRate.EquipmentNo);
         }
     }
 }
