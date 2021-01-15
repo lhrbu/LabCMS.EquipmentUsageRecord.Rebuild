@@ -12,6 +12,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using LabCMS.Gateway.Shared.Extensions;
+using Serilog;
+using Microsoft.AspNetCore.Hosting.Server.Features;
 
 namespace LabCMS.Gateway.Server
 {
@@ -27,7 +30,7 @@ namespace LabCMS.Gateway.Server
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
+            
             //services.AddControllers();
             services.AddOcelot().AddConsul();
         }
@@ -39,9 +42,13 @@ namespace LabCMS.Gateway.Server
             //{
             //    app.UseDeveloperExceptionPage();
             //}
+            ICollection<string> ipAddresses = app.ServerFeatures.Get<IServerAddressesFeature>().Addresses;
+            Log.Logger.Warning("ASP NET Core now Listenning on: {IPAddresses}"
+                , ipAddresses);
+            app.UseSerilogRequestLogging();
 
-            //app.UseRouting();
             app.UseOcelot().Wait();
+            app.UseConsulAsServiceProvider($"LabCMS.{nameof(Gateway)}");
             //app.UseAuthorization();
 
             //app.UseEndpoints(endpoints =>

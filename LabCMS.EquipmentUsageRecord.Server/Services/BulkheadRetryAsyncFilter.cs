@@ -12,14 +12,14 @@ using System.Threading.Tasks;
 
 namespace LabCMS.EquipmentUsageRecord.Server.Services
 {
-    public class BulkheadRetryAsyncFilter : IAsyncResultFilter
+    public class BulkheadRetryAsyncFilter : IAsyncActionFilter
     {
-        private IReadOnlyPolicyRegistry<string> _policyRegistry;
+        private readonly IReadOnlyPolicyRegistry<string> _policyRegistry;
         public BulkheadRetryAsyncFilter(IReadOnlyPolicyRegistry<string> policyRegistry)
         { _policyRegistry = policyRegistry; }
-        public async Task OnResultExecutionAsync(ResultExecutingContext context, ResultExecutionDelegate next)
+        public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
-            if(_policyRegistry.TryGet(nameof(BulkheadRetryAsyncFilter),out AsyncPolicy? policy) && policy is not null)
+           if(_policyRegistry.TryGet(nameof(BulkheadRetryAsyncFilter),out AsyncPolicy? policy) && policy is not null)
             {
                 await policy.ExecuteAsync(async () => await next());
             }

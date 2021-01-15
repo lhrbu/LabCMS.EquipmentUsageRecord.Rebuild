@@ -31,7 +31,8 @@ namespace LabCMS.EquipmentUsageRecord.Server.Controllers
         public IActionResult Get()
         {
             Stream stream = _excelExportService.Export(
-                _repository.UsageRecords.Include(item=>item.Project).Include(item=>item.EquipmentHourlyRate));
+                _repository.UsageRecords.OrderBy(item=>item.StartTime)
+                    .Include(item=>item.Project).Include(item=>item.EquipmentHourlyRate));
             return File(stream,"text/plain", "EquipmentUsageRecord.xlsx");
         }
     }

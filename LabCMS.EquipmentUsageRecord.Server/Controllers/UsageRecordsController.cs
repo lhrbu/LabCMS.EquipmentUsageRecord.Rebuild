@@ -43,7 +43,7 @@ namespace LabCMS.EquipmentUsageRecord.Server.Controllers
 
         [HttpGet]
         public IAsyncEnumerable<UsageRecord> GetAsync() =>
-            _repository.UsageRecords.AsNoTracking().AsAsyncEnumerable();
+            _repository.UsageRecords.OrderBy(item=>item.Id).AsNoTracking().AsAsyncEnumerable();
         [HttpPost]
         public async ValueTask PostAsync(UsageRecord usageRecord)
         {
@@ -75,7 +75,7 @@ namespace LabCMS.EquipmentUsageRecord.Server.Controllers
             _ = _elasticSearch.IndexAsync(usageRecord).ConfigureAwait(false);
 
         }
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public async ValueTask DeleteById(int id)
         {
             UsageRecord? usageRecord = await _repository.UsageRecords.FindAsync(id);

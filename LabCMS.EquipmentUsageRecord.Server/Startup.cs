@@ -70,6 +70,8 @@ namespace LabCMS.EquipmentUsageRecord.Server
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env,DbLogHandleService dbLogHandleService)
         {
             dbLogHandleService.BeginWriteDbLog().ConfigureAwait(false);
+
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -80,8 +82,6 @@ namespace LabCMS.EquipmentUsageRecord.Server
             //    .ApplicationStopped.Register(Uninstall);
 
             app.UseRouting();
-
-            //app.UseAuthorization();
             app.UseCookieJwtAuthorization();
 
             app.UseEndpoints(endpoints =>

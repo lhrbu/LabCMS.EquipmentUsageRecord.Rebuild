@@ -3,18 +3,17 @@
     {
       "UpStreamPathTemplate": "/api/Projects",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
-      "ServiceName": "ProjectDomain",
+      "ServiceName": "EquipmentUsageRecord",
       "LoadBalancerOptions": {
         "Type": "LeastConnection"
       },
       "DownstreamPathTemplate": "/api/Projects",
       "DownstreamScheme": "http"
     },
-
     {
       "UpStreamPathTemplate": "/api/Projects/{others}",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
-      "ServiceName": "ProjectDomain",
+      "ServiceName": "EquipmentUsageRecord",
       "LoadBalancerOptions": {
         "Type": "LeastConnection"
       },
@@ -23,34 +22,9 @@
     },
 
     {
-      "UpStreamPathTemplate": "/api/Fixtures",
-      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
-
-      "ServiceName": "FixtureDomain",
-      "LoadBalancerOptions": {
-        "Type": "LeastConnection"
-      },
-      "DownstreamPathTemplate": "/api/Fixtures",
-      "DownstreamScheme": "http"
-    },
-
-    {
-      "UpStreamPathTemplate": "/api/Fixtures/DynamicQuery",
-      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
-
-      "ServiceName": "FixtureDomain",
-      "LoadBalancerOptions": {
-        "Type": "LeastConnection"
-      },
-      "DownstreamPathTemplate": "/api/Fixtures/DynamicQuery",
-      "DownstreamScheme": "http"
-    },
-
-    {
       "UpStreamPathTemplate": "/api/EquipmentHourlyRates",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
-
-      "ServiceName": "EquipmentDomain",
+      "ServiceName": "EquipmentUsageRecord",
       "LoadBalancerOptions": {
         "Type": "LeastConnection"
       },
@@ -60,19 +34,18 @@
     {
       "UpStreamPathTemplate": "/api/EquipmentHourlyRates/{others}",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
-
-      "ServiceName": "EquipmentDomain",
+      "ServiceName": "EquipmentUsageRecord",
       "LoadBalancerOptions": {
         "Type": "LeastConnection"
       },
       "DownstreamPathTemplate": "/api/EquipmentHourlyRates/{others}",
       "DownstreamScheme": "http"
     },
+
     {
       "UpStreamPathTemplate": "/api/UsageRecords",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
-
-      "ServiceName": "EquipmentDomain",
+      "ServiceName": "EquipmentUsageRecord",
       "LoadBalancerOptions": {
         "Type": "LeastConnection"
       },
@@ -82,25 +55,58 @@
     {
       "UpStreamPathTemplate": "/api/UsageRecords/{others}",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
-
-      "ServiceName": "EquipmentDomain",
+      "ServiceName": "EquipmentUsageRecord",
       "LoadBalancerOptions": {
         "Type": "LeastConnection"
       },
       "DownstreamPathTemplate": "/api/UsageRecords/{others}",
       "DownstreamScheme": "http"
     },
-    {
-      "UpStreamPathTemplate": "/api/ElasticSearch",
-      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
 
-      "ServiceName": "EquipmentDomain",
+    {
+      "UpStreamPathTemplate": "/api/ExcelExport",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+      "ServiceName": "EquipmentUsageRecord",
       "LoadBalancerOptions": {
         "Type": "LeastConnection"
       },
-      "DownstreamPathTemplate": "/api/ElasticSearch",
+      "DownstreamPathTemplate": "/api/ExcelExport",
+      "DownstreamScheme": "http"
+    },
+
+    {
+      "UpStreamPathTemplate": "/api/ElasticSearchInterop",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+      "ServiceName": "EquipmentUsageRecord",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "DownstreamPathTemplate": "/api/ElasticSearchInterop",
+      "DownstreamScheme": "http"
+    },
+
+    {
+      "UpStreamPathTemplate": "/api/DynamicQuery",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+      "ServiceName": "EquipmentUsageRecord",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "DownstreamPathTemplate": "/api/DynamicQuery",
+      "DownstreamScheme": "http"
+    },
+
+    {
+      "UpStreamPathTemplate": "/api/SignIn",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+      "ServiceName": "EquipmentUsageRecord",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "DownstreamPathTemplate": "/api/SignIn",
       "DownstreamScheme": "http"
     }
+    
   ],
 
   "GlobalConfiguration": {

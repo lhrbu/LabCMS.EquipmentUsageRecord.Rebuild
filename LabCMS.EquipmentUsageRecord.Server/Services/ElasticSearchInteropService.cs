@@ -14,7 +14,7 @@ namespace LabCMS.EquipmentUsageRecord.Server.Services
     public class ElasticSearchInteropService:IElasticSearchInteropService
     {
         private readonly ElasticClient _elasticClient;
-        public string IndexName { get; } = "usagerecords-raw";
+        public string IndexName { get; } = "pgsql-usagerecords-raw";
         public ElasticSearchInteropService(
             IConfiguration configuration)
         {

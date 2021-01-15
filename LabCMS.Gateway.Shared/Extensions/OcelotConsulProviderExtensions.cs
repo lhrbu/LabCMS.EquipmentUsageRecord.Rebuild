@@ -37,7 +37,7 @@ namespace LabCMS.Gateway.Shared.Extensions
             this IApplicationBuilder app,
             string serviceName)
         {
-            using ConsulClient consulClient = new ConsulClient(options =>
+            using ConsulClient consulClient = new (options =>
                 options.Address = new Uri("http://localhost:8500"));
             IEnumerable<Task<WriteResult>> DeregisterTasks = app.ApplicationServices.GetUris().Select(
                 uri => consulClient.Agent.ServiceDeregister(CreateServiceId(serviceName, uri)));
