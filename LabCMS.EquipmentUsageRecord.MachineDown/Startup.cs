@@ -2,6 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using LabCMS.EquipmentUsageRecord.MachineDown.Services;
+using MailKit.Net.Smtp;
+using MailKit.Security;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -15,6 +18,13 @@ namespace LabCMS.EquipmentUsageRecord.MachineDown
 {
     public class Startup
     {
+        private SmtpClient CreateSmtpClient()
+        {
+            SmtpClient smtpClient = new();
+            smtpClient.Connect("", 25, SecureSocketOptions.None);
+            smtpClient.Authenticate("liha52", "2112358LHR/");
+            return smtpClient;
+        }
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -31,6 +41,9 @@ namespace LabCMS.EquipmentUsageRecord.MachineDown
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "LabCMS.EquipmentUsageRecord.MachineDownRecord", Version = "v1" });
             });
+            services.AddSingleton<SmtpClient>(CreateSmtpClient());
+            services.AddSingleton<EmailSendService>();
+            services.AddSingleton<NotificationService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -50,6 +63,16 @@ namespace LabCMS.EquipmentUsageRecord.MachineDown
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+            });
+
+            NotificationService notificationService = app.ApplicationServices
+                .GetRequiredService<NotificationService>();
+            Task.Run(async () =>
+            {
+                while (true)
+                {
+                    await notificationService.ScheduleTasksForTomorrowAsync();
+                }
             });
         }
     }
