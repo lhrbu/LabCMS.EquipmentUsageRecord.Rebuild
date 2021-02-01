@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using LabCMS.EquipmentUsageRecord.MachineDown.Services;
 using MailKit.Net.Smtp;
@@ -67,13 +69,10 @@ namespace LabCMS.EquipmentUsageRecord.MachineDown
 
             NotificationService notificationService = app.ApplicationServices
                 .GetRequiredService<NotificationService>();
-            Task.Run(async () =>
-            {
-                while (true)
-                {
-                    await notificationService.ScheduleTasksForTomorrowAsync();
-                }
-            });
+            Timer timer = new(obj => _=(obj as NotificationService)!.ScheduleTasksForTodayAsync(), 
+                notificationService, 
+                TimeSpan.Zero, 
+                TimeSpan.FromDays(1));
         }
     }
 }

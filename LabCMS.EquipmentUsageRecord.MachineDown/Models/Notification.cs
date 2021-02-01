@@ -7,5 +7,5 @@ namespace LabCMS.EquipmentUsageRecord.MachineDown.Models
 {
     public record Notification(
         MachineDownRecord MachineDownRecord,
-        DateTimeOffset NotifyDate);
+        DateTimeOffset NotifyDateTimeOffset);
 }

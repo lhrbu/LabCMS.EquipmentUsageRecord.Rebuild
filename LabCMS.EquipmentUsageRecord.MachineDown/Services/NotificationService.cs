@@ -27,23 +27,23 @@ namespace LabCMS.EquipmentUsageRecord.MachineDown.Services
         private readonly IEnumerable<string> _from = new[] { "machinedownrecord.center@hella.com" };
 
 
-        public async Task ScheduleTasksForTomorrowAsync()
+        public async Task ScheduleTasksForTodayAsync()
         {
-            var notifications = _repository.MachineDownRecords.Where(item => !item.MachineRepairedDate.HasValue)
+            Notification[] notifications = _repository.MachineDownRecords.Where(item => !item.MachineRepairedDate.HasValue)
                 .Select(item=>new Notification(item,RefreshNotifyDate(item.MachineDownDate)))
-                .OrderBy(item=>item.NotifyDate);
+                .OrderBy(item=>item.NotifyDateTimeOffset)
+                .ToArray();
 
-            List<Task> notificationTasks = new(notifications.Count());
             foreach(Notification notification in notifications)
             {
-                Task task = Task.Run(async () =>
-                {
-                    await Task.Delay(notification.NotifyDate - DateTimeOffset.Now);
+                DateTimeOffset now = DateTimeOffset.Now;
+                if(now.AddMinutes(1)<notification.NotifyDateTimeOffset)
+                { 
+                    await Task.Delay(notification.NotifyDateTimeOffset - now);
                     await SendNotificationAsync(notification);
-                });
-                notificationTasks.Add(task);
+                }
             }
-            await Task.WhenAll(notificationTasks);
+           
                 
         }
 
@@ -62,7 +62,7 @@ namespace LabCMS.EquipmentUsageRecord.MachineDown.Services
         private DateTimeOffset RefreshNotifyDate(DateTimeOffset machineDownDate)
         {
             DateTimeOffset now = DateTimeOffset.Now;
-            return new DateTimeOffset(now.Year, now.Month, now.Day + 1, machineDownDate.Hour, machineDownDate.Minute, machineDownDate.Second, now.Offset);
+            return new DateTimeOffset(now.Year, now.Month, now.Day, machineDownDate.Hour, machineDownDate.Minute, machineDownDate.Second, now.Offset);
         }
     }
 }
