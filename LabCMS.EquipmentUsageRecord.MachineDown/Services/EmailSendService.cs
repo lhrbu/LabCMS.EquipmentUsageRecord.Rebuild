@@ -17,7 +17,7 @@ namespace LabCMS.EquipmentUsageRecord.MachineDown.Services
         public async ValueTask SendEmailAsync(IEnumerable<string> fromAddresses,IEnumerable<string> toAddresses,
             string subject,string payload)
         {
-            MimeMessage email = new (fromAddresses,toAddresses,subject);
+            MimeMessage email = new ();
             email.Body = new TextPart(TextFormat.Html){Text = payload};
             await _smtpClient.SendAsync(email);
         }

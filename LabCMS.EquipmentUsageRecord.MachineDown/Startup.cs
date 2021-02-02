@@ -4,12 +4,14 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using LabCMS.EquipmentUsageRecord.MachineDown.Repositories;
 using LabCMS.EquipmentUsageRecord.MachineDown.Services;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -23,7 +25,7 @@ namespace LabCMS.EquipmentUsageRecord.MachineDown
         private SmtpClient CreateSmtpClient()
         {
             SmtpClient smtpClient = new();
-            smtpClient.Connect("", 25, SecureSocketOptions.None);
+            smtpClient.Connect("smtpapac.hella.com", 25, SecureSocketOptions.None);
             smtpClient.Authenticate("liha52", "2112358LHR/");
             return smtpClient;
         }
@@ -46,6 +48,8 @@ namespace LabCMS.EquipmentUsageRecord.MachineDown
             services.AddSingleton<SmtpClient>(CreateSmtpClient());
             services.AddSingleton<EmailSendService>();
             services.AddSingleton<NotificationService>();
+            services.AddDbContextPool<MachineDownRecordsRepository>(options=>options
+                .UseNpgsql(Configuration.GetConnectionString(nameof(MachineDownRecordsRepository))),64);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -69,10 +73,22 @@ namespace LabCMS.EquipmentUsageRecord.MachineDown
 
             NotificationService notificationService = app.ApplicationServices
                 .GetRequiredService<NotificationService>();
-            Timer timer = new(obj => _=(obj as NotificationService)!.ScheduleTasksForTodayAsync(), 
-                notificationService, 
-                TimeSpan.Zero, 
-                TimeSpan.FromDays(1));
+
+            Task.Run(async()=>{
+                while(true){
+                    await notificationService.ScheduleTasksForTodayAsync();
+                    await Task.Delay(TimeSpan.FromDays(1));
+                }
+            }).ContinueWith(task=>{
+                if(task.Exception is not null){
+                    Console.WriteLine(task.Exception);
+                }
+            });
+            
+            // Timer timer = new(obj => _=(obj as NotificationService)!.ScheduleTasksForTodayAsync(), 
+            //     notificationService, 
+            //     TimeSpan.Zero, 
+            //     TimeSpan.FromDays(1));
         }
     }
 }

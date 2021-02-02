@@ -5,9 +5,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using EasyNetQ;
 using LabCMS.EquipmentUsageRecord.MachineDown.Models;
 using LabCMS.EquipmentUsageRecord.MachineDown.Repositories;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace LabCMS.EquipmentUsageRecord.MachineDown.Services
 {
@@ -15,13 +16,13 @@ namespace LabCMS.EquipmentUsageRecord.MachineDown.Services
     {
         private readonly ConcurrentQueue<MachineDownRecord> _unclosedRecordsQueue = new();
 
-        private readonly MachineDownRecordsRepository _repository;
+        private readonly IServiceProvider _serviceProvider;
         private readonly EmailSendService _emailSendService;
         public NotificationService(
-            MachineDownRecordsRepository repository,
+            IServiceProvider serviceProvider,
             EmailSendService emailSendService)
         { 
-            _repository = repository;
+            _serviceProvider = serviceProvider;
             _emailSendService = emailSendService;
         }
         private readonly IEnumerable<string> _from = new[] { "machinedownrecord.center@hella.com" };
@@ -29,7 +30,10 @@ namespace LabCMS.EquipmentUsageRecord.MachineDown.Services
 
         public async Task ScheduleTasksForTodayAsync()
         {
-            Notification[] notifications = _repository.MachineDownRecords.Where(item => !item.MachineRepairedDate.HasValue)
+            MachineDownRecordsRepository repository = _serviceProvider.CreateScope().ServiceProvider.GetRequiredService<MachineDownRecordsRepository>();
+            Notification[] notifications = repository.MachineDownRecords.Where(item => !item.MachineRepairedDate.HasValue)
+                .Include(item=>item.User)
+                .AsEnumerable()
                 .Select(item=>new Notification(item,RefreshNotifyDate(item.MachineDownDate)))
                 .OrderBy(item=>item.NotifyDateTimeOffset)
                 .ToArray();
@@ -37,7 +41,7 @@ namespace LabCMS.EquipmentUsageRecord.MachineDown.Services
             foreach(Notification notification in notifications)
             {
                 DateTimeOffset now = DateTimeOffset.Now;
-                if(now.AddMinutes(1)<notification.NotifyDateTimeOffset)
+                if(now<notification.NotifyDateTimeOffset.AddMinutes(2))
                 { 
                     await Task.Delay(notification.NotifyDateTimeOffset - now);
                     await SendNotificationAsync(notification);
@@ -51,7 +55,8 @@ namespace LabCMS.EquipmentUsageRecord.MachineDown.Services
         public async ValueTask SendNotificationAsync(Notification notification)
         {
             MachineDownRecord record = notification.MachineDownRecord;
-            await _repository.Entry(record).Reference(item => item.User).LoadAsync();
+            // MachineDownRecordsRepository repository = _serviceProvider.CreateScope().ServiceProvider.GetRequiredService<MachineDownRecordsRepository>();
+            // await repository.Entry(record).Reference(item => item.User).LoadAsync();
             IEnumerable<string> to = new[] { record!.User!.Email };
             string payload = $"[{DateTimeOffset.Now} INF]: {record.EquipmentNo} is down since {record.MachineDownDate}, need to change the state?";
             await _emailSendService.SendEmailAsync(_from, to,
