@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,62 +13,64 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace LabCMS.EquipmentUsageRecord.MachineDown.Services
 {
+    public class MachineDownRecordIdComparer : IEqualityComparer<MachineDownRecord?>
+    {
+        public bool Equals(MachineDownRecord? x, MachineDownRecord? y) =>
+            x?.Id == y?.Id;
+
+        public int GetHashCode([DisallowNull] MachineDownRecord obj) => obj.GetHashCode();
+    }
+
     public class NotificationService
     {
-        private readonly ConcurrentQueue<MachineDownRecord> _unclosedRecordsQueue = new();
-
+        private readonly MachineDownRecordIdComparer _idComparer = new();
         private readonly IServiceProvider _serviceProvider;
-        private readonly EmailSendService _emailSendService;
-        public NotificationService(
-            IServiceProvider serviceProvider,
-            EmailSendService emailSendService)
+        public NotificationService(IServiceProvider serviceProvider)
         { 
             _serviceProvider = serviceProvider;
-            _emailSendService = emailSendService;
         }
-        private readonly IEnumerable<string> _from = new[] { "machinedownrecord.center@hella.com" };
+        //private readonly IEnumerable<string> _from = new[] { "machinedownrecord.center@hella.com" };
+        private readonly IEnumerable<string> _from = new[] { "lihaoran228@163.com" };
 
-
-        public async Task ScheduleTasksForTodayAsync()
+        public async Task ScanAndSendNotificationAsync()
         {
             MachineDownRecordsRepository repository = _serviceProvider.CreateScope().ServiceProvider.GetRequiredService<MachineDownRecordsRepository>();
-            Notification[] notifications = repository.MachineDownRecords.Where(item => !item.MachineRepairedDate.HasValue)
+            
+            DateTimeOffset now = DateTimeOffset.Now;
+            var notifiedRecords = repository.NotifiedTokens
+                .Include(item => item.MachineDownRecord)
+                .AsEnumerable()
+                .Where(item=>item.NotifiedDate.Year==now.Year &&
+                    item.NotifiedDate.Month == now.Month &&
+                    item.NotifiedDate.Day == now.Day)
+                .Select(item=>item.MachineDownRecord);
+
+            IEnumerable<MachineDownRecord> records = repository.MachineDownRecords
+                .Where(item => !item.MachineRepairedDate.HasValue)
                 .Include(item=>item.User)
                 .AsEnumerable()
-                .Select(item=>new Notification(item,RefreshNotifyDate(item.MachineDownDate)))
-                .OrderBy(item=>item.NotifyDateTimeOffset)
-                .ToArray();
+                .Except(notifiedRecords,_idComparer)!;
 
-            foreach(Notification notification in notifications)
-            {
-                DateTimeOffset now = DateTimeOffset.Now;
-                if(now<notification.NotifyDateTimeOffset.AddMinutes(2))
-                { 
-                    await Task.Delay(notification.NotifyDateTimeOffset - now);
-                    await SendNotificationAsync(notification);
-                }
+            using EmailSendService emailSendService = _serviceProvider.GetRequiredService<EmailSendService>();
+            foreach (MachineDownRecord record in records)
+            { 
+                await SendNotificationAsync(emailSendService,record);
+                //await repository.NotifiedTokens.AddAsync(new() { 
+                //    NotifiedDate = now, 
+                //    MachineDownRecord = record });
             }
-           
-                
+            //await repository.SaveChangesAsync();
         }
 
 
-        public async ValueTask SendNotificationAsync(Notification notification)
+        public async ValueTask SendNotificationAsync(EmailSendService emailSendService,MachineDownRecord record)
         {
-            MachineDownRecord record = notification.MachineDownRecord;
-            // MachineDownRecordsRepository repository = _serviceProvider.CreateScope().ServiceProvider.GetRequiredService<MachineDownRecordsRepository>();
-            // await repository.Entry(record).Reference(item => item.User).LoadAsync();
             IEnumerable<string> to = new[] { record!.User!.Email };
-            string payload = $"[{DateTimeOffset.Now} INF]: {record.EquipmentNo} is down since {record.MachineDownDate}, need to change the state?";
-            await _emailSendService.SendEmailAsync(_from, to,
+            string payload = $"[{DateTimeOffset.Now} INF]: Equipment {record.EquipmentNo} is down since {record.MachineDownDate}, need to change the state?";
+            await emailSendService.SendEmailAsync(_from, to,
                 $"no-reply: machine down record notify at {DateTimeOffset.Now}",
                 payload);
-        }
-
-        private DateTimeOffset RefreshNotifyDate(DateTimeOffset machineDownDate)
-        {
-            DateTimeOffset now = DateTimeOffset.Now;
-            return new DateTimeOffset(now.Year, now.Month, now.Day, machineDownDate.Hour, machineDownDate.Minute, machineDownDate.Second, now.Offset);
+            
         }
     }
 }

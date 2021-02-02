@@ -17,15 +17,23 @@ namespace LabCMS.EquipmentUsageRecord.MachineDown.Services
         public async ValueTask SendEmailAsync(IEnumerable<string> fromAddresses,IEnumerable<string> toAddresses,
             string subject,string payload)
         {
-            MimeMessage email = new ();
-            email.Body = new TextPart(TextFormat.Html){Text = payload};
+            MimeMessage email = new (
+                fromAddresses.Select(MailboxAddress.Parse),
+                toAddresses.Select(MailboxAddress.Parse),
+                subject, 
+                new TextPart(TextFormat.Html) { Text = payload });
             await _smtpClient.SendAsync(email);
         }
 
         public void Dispose()
         {
-            _smtpClient.Disconnect(true);
-            _smtpClient.Dispose();
+            if (!_disposed)
+            {
+                _smtpClient.Disconnect(true);
+                _smtpClient.Dispose();
+                _disposed = true;
+            }
         }
+        private bool _disposed = false;
     }
 }

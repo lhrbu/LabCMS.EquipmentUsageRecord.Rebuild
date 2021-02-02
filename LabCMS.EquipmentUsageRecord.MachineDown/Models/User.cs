@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace LabCMS.EquipmentUsageRecord.MachineDown.Models
 {
-    public class User
+    public record User
     {
         [Key]
         public string UserId {get;init;} = null!;

@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LabCMS.EquipmentUsageRecord.MachineDown.Migrations
 {
     [DbContext(typeof(MachineDownRecordsRepository))]
-    [Migration("20210202083203_init")]
+    [Migration("20210202130543_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -52,6 +52,28 @@ namespace LabCMS.EquipmentUsageRecord.MachineDown.Migrations
                     b.ToTable("MachineDownRecords");
                 });
 
+            modelBuilder.Entity("LabCMS.EquipmentUsageRecord.MachineDown.Models.NotifiedToken", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .UseIdentityByDefaultColumn();
+
+                    b.Property<int>("MachineDownRecordId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset>("NotifiedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MachineDownRecordId");
+
+                    b.HasIndex("NotifiedDate");
+
+                    b.ToTable("NotifiedTokens");
+                });
+
             modelBuilder.Entity("LabCMS.EquipmentUsageRecord.MachineDown.Models.User", b =>
                 {
                     b.Property<string>("UserId")
@@ -75,6 +97,17 @@ namespace LabCMS.EquipmentUsageRecord.MachineDown.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("LabCMS.EquipmentUsageRecord.MachineDown.Models.NotifiedToken", b =>
+                {
+                    b.HasOne("LabCMS.EquipmentUsageRecord.MachineDown.Models.MachineDownRecord", "MachineDownRecord")
+                        .WithMany()
+                        .HasForeignKey("MachineDownRecordId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MachineDownRecord");
                 });
 #pragma warning restore 612, 618
         }

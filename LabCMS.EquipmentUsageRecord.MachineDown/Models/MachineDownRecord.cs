@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LabCMS.EquipmentUsageRecord.MachineDown.Models
 {
-    public class MachineDownRecord
+    public record MachineDownRecord
     {
         [Key]
         public int Id {get;set;}
