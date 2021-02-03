@@ -18,7 +18,7 @@ namespace LabCMS.EquipmentUsageRecord.MachineDown.Services
         public bool Equals(MachineDownRecord? x, MachineDownRecord? y) =>
             x?.Id == y?.Id;
 
-        public int GetHashCode([DisallowNull] MachineDownRecord obj) => obj.GetHashCode();
+        public int GetHashCode([DisallowNull] MachineDownRecord obj) => obj.Id.GetHashCode();
     }
 
     public class NotificationService
@@ -29,8 +29,8 @@ namespace LabCMS.EquipmentUsageRecord.MachineDown.Services
         { 
             _serviceProvider = serviceProvider;
         }
-        //private readonly IEnumerable<string> _from = new[] { "machinedownrecord.center@hella.com" };
-        private readonly IEnumerable<string> _from = new[] { "lihaoran228@163.com" };
+        private readonly IEnumerable<string> _from = new[] { "machinedownrecord.center@hella.com" };
+        //private readonly IEnumerable<string> _from = new[] { "lihaoran228@163.com" };
 
         public async Task ScanAndSendNotificationAsync()
         {
@@ -43,23 +43,23 @@ namespace LabCMS.EquipmentUsageRecord.MachineDown.Services
                 .Where(item=>item.NotifiedDate.Year==now.Year &&
                     item.NotifiedDate.Month == now.Month &&
                     item.NotifiedDate.Day == now.Day)
-                .Select(item=>item.MachineDownRecord);
+                .Select(item=>item.MachineDownRecord).ToList();
 
             IEnumerable<MachineDownRecord> records = repository.MachineDownRecords
                 .Where(item => !item.MachineRepairedDate.HasValue)
                 .Include(item=>item.User)
                 .AsEnumerable()
-                .Except(notifiedRecords,_idComparer)!;
+                .Except(notifiedRecords,_idComparer)!.ToList()!;
 
             using EmailSendService emailSendService = _serviceProvider.GetRequiredService<EmailSendService>();
             foreach (MachineDownRecord record in records)
             { 
                 await SendNotificationAsync(emailSendService,record);
-                //await repository.NotifiedTokens.AddAsync(new() { 
-                //    NotifiedDate = now, 
-                //    MachineDownRecord = record });
+                await repository.NotifiedTokens.AddAsync(new() { 
+                   NotifiedDate = now, 
+                   MachineDownRecord = record });
             }
-            //await repository.SaveChangesAsync();
+            await repository.SaveChangesAsync();
         }
 
 

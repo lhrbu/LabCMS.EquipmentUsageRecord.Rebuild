@@ -1,5 +1,6 @@
 ﻿using LabCMS.EquipmentUsageRecord.MachineDown.Models;
 using LabCMS.EquipmentUsageRecord.MachineDown.Repositories;
+using LabCMS.EquipmentUsageRecord.MachineDown.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,20 +15,31 @@ namespace LabCMS.EquipmentUsageRecord.MachineDown.Controllers
     [ApiController]
     public class MachineDownRecordsController : ControllerBase
     {
+        private readonly NotificationService _notificationService;
         private readonly MachineDownRecordsRepository _repository;
         public MachineDownRecordsController(
+            NotificationService notificationService,
             MachineDownRecordsRepository repository)
-        { _repository = repository; }
+        { 
+            _notificationService = notificationService;
+            _repository = repository; 
+        }
 
         [HttpGet]
         public IAsyncEnumerable<MachineDownRecord> GetAllAsync() =>
             _repository.MachineDownRecords.OrderBy(item=>item.Id).AsAsyncEnumerable();
 
         [HttpPost]
-        public async ValueTask RegisterRecord(MachineDownRecord record)
+        public async ValueTask RegisterRecord([FromBody]MachineDownRecord record,
+            [FromServices]EmailSendService emailSendService)
         {
-            await _repository.MachineDownRecords.AddAsync(record);
+            var recordEntry = await _repository.MachineDownRecords.AddAsync(record);
             await _repository.SaveChangesAsync();
+            await recordEntry.Reference(item=>item.User).LoadAsync();
+            await _repository.NotifiedTokens.AddAsync(new() { 
+                   NotifiedDate = DateTimeOffset.Now, 
+                   MachineDownRecord = recordEntry.Entity });
+            await _notificationService.SendNotificationAsync(emailSendService,recordEntry.Entity);
         }
 
         [HttpPut]

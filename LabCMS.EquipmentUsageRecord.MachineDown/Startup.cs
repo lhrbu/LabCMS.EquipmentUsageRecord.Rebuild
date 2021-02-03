@@ -18,6 +18,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using LabCMS.Gateway.Shared.Extensions;
 
 namespace LabCMS.EquipmentUsageRecord.MachineDown
 {
@@ -57,7 +58,7 @@ namespace LabCMS.EquipmentUsageRecord.MachineDown
                 DateTimeOffset now = DateTimeOffset.Now;
                 if (startHour.HasValue)
                 {
-                    DateTimeOffset targetDateTimeOffset = new DateTimeOffset(
+                    DateTimeOffset targetDateTimeOffset = new (
                         now.Year, now.Month, now.Day, startHour.Value, 0, 0, now.Offset);
                     if (now < targetDateTimeOffset)
                     { await Task.Delay(targetDateTimeOffset - now); }
@@ -103,9 +104,11 @@ namespace LabCMS.EquipmentUsageRecord.MachineDown
 
             lifetime.ApplicationStopping.Register(() => _tokenSource.Cancel());
 
-            StartScanAsync(app,TimeSpan.FromMinutes(5)).ConfigureAwait(false);
-
-
+            StartScanAsync(app).ConfigureAwait(false);
+            
+            if(!env.IsDevelopment()){
+                app.UseConsulAsServiceProvider(nameof(MachineDownRecord));
+            }
         }
     }
 }

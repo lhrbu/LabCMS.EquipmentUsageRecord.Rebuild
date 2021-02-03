@@ -12,10 +12,10 @@ namespace LabCMS.EquipmentUsageRecord.MachineDown.Models
         public SmtpClient Create()
         {
             SmtpClient smtpClient = new();
-            //smtpClient.Connect("smtpapac.hella.com", 25, SecureSocketOptions.None);
-            //smtpClient.Authenticate("liha52", "2112358LHR/");
-            smtpClient.Connect("smtp.163.com", 25, SecureSocketOptions.None);
-            smtpClient.Authenticate("lihaoran228@163.com", "1234qwer");
+            smtpClient.Connect("smtpapac.hella.com", 25, SecureSocketOptions.None);
+            smtpClient.Authenticate("liha52", "2112358LHR/");
+            //smtpClient.Connect("smtp.163.com", 25, SecureSocketOptions.None);
+            //smtpClient.Authenticate("lihaoran228@163.com", "1234qwer");
             return smtpClient;
         }
     }
