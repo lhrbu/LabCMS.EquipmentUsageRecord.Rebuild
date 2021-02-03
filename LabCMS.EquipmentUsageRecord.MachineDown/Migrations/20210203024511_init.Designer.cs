@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LabCMS.EquipmentUsageRecord.MachineDown.Migrations
 {
     [DbContext(typeof(MachineDownRecordsRepository))]
-    [Migration("20210202130543_init")]
+    [Migration("20210203024511_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -29,17 +29,18 @@ namespace LabCMS.EquipmentUsageRecord.MachineDown.Migrations
                         .UseIdentityByDefaultColumn();
 
                     b.Property<string>("Comment")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("EquipmentNo")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTimeOffset>("MachineDownDate")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<long>("MachineDownDate")
+                        .HasColumnType("bigint");
 
-                    b.Property<DateTimeOffset?>("MachineRepairedDate")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<long?>("MachineRepairedDate")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -62,8 +63,8 @@ namespace LabCMS.EquipmentUsageRecord.MachineDown.Migrations
                     b.Property<int>("MachineDownRecordId")
                         .HasColumnType("integer");
 
-                    b.Property<DateTimeOffset>("NotifiedDate")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<long>("NotifiedDate")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
@@ -86,6 +87,18 @@ namespace LabCMS.EquipmentUsageRecord.MachineDown.Migrations
                     b.HasKey("UserId");
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = "liha52",
+                            Email = "Raccoon.Li@Hella.com"
+                        },
+                        new
+                        {
+                            UserId = "zhaofe10",
+                            Email = "F.Zhao@Hella.com"
+                        });
                 });
 
             modelBuilder.Entity("LabCMS.EquipmentUsageRecord.MachineDown.Models.MachineDownRecord", b =>

@@ -34,11 +34,11 @@ namespace LabCMS.EquipmentUsageRecord.MachineDown.Controllers
             [FromServices]EmailSendService emailSendService)
         {
             var recordEntry = await _repository.MachineDownRecords.AddAsync(record);
-            await _repository.SaveChangesAsync();
             await recordEntry.Reference(item=>item.User).LoadAsync();
             await _repository.NotifiedTokens.AddAsync(new() { 
                    NotifiedDate = DateTimeOffset.Now, 
                    MachineDownRecord = recordEntry.Entity });
+            await _repository.SaveChangesAsync();
             await _notificationService.SendNotificationAsync(emailSendService,recordEntry.Entity);
         }
 
@@ -49,7 +49,7 @@ namespace LabCMS.EquipmentUsageRecord.MachineDown.Controllers
             await _repository.SaveChangesAsync();
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public async ValueTask<IActionResult> DeleteByIdAsync(int id)
         {
             MachineDownRecord? record = await _repository.MachineDownRecords.FindAsync(id);

@@ -12,5 +12,10 @@ namespace LabCMS.EquipmentUsageRecord.Shared.Utils
         public static ValueConverter<DateTimeOffset, long> DataTimeOffsetUtcSecondsConverter { get; } = new(
                     dateTimeOffset => dateTimeOffset.ToUnixTimeSeconds(),
                     offsetSeconds => DateTimeOffset.FromUnixTimeSeconds(offsetSeconds) );
+        
+        public static ValueConverter<DateTimeOffset?,long?> NullableDateTimeOffsetUtcSecondsConverter{get;}=new(
+            dateTimeOffset=>dateTimeOffset.HasValue?dateTimeOffset.Value.ToUnixTimeSeconds():null,
+            offsetSeconds => offsetSeconds.HasValue?DateTimeOffset.FromUnixTimeSeconds(offsetSeconds.Value):null
+        );
     }
 }

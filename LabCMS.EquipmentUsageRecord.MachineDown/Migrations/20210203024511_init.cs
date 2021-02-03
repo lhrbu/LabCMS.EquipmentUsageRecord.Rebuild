@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace LabCMS.EquipmentUsageRecord.MachineDown.Migrations
@@ -28,9 +27,9 @@ namespace LabCMS.EquipmentUsageRecord.MachineDown.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     UserId = table.Column<string>(type: "text", nullable: false),
                     EquipmentNo = table.Column<string>(type: "text", nullable: false),
-                    MachineDownDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    MachineRepairedDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    Comment = table.Column<string>(type: "text", nullable: true)
+                    MachineDownDate = table.Column<long>(type: "bigint", nullable: false),
+                    MachineRepairedDate = table.Column<long>(type: "bigint", nullable: true),
+                    Comment = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -49,7 +48,7 @@ namespace LabCMS.EquipmentUsageRecord.MachineDown.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    NotifiedDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    NotifiedDate = table.Column<long>(type: "bigint", nullable: false),
                     MachineDownRecordId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
@@ -61,6 +60,15 @@ namespace LabCMS.EquipmentUsageRecord.MachineDown.Migrations
                         principalTable: "MachineDownRecords",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "UserId", "Email" },
+                values: new object[,]
+                {
+                    { "liha52", "Raccoon.Li@Hella.com" },
+                    { "zhaofe10", "F.Zhao@Hella.com" }
                 });
 
             migrationBuilder.CreateIndex(
