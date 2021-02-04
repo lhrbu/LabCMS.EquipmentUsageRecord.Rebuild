@@ -53,6 +53,8 @@ namespace LabCMS.EquipmentUsageRecord.MachineDown
         private readonly CancellationTokenSource _tokenSource = new();
         private async Task StartScanAsync(IApplicationBuilder app,TimeSpan? interval=null,int? startHour=null)
         {
+            NotificationService notificationService = app.ApplicationServices
+                    .GetRequiredService<NotificationService>();
             try
             {
                 DateTimeOffset now = DateTimeOffset.Now;
@@ -61,11 +63,17 @@ namespace LabCMS.EquipmentUsageRecord.MachineDown
                     DateTimeOffset targetDateTimeOffset = new (
                         now.Year, now.Month, now.Day, startHour.Value, 0, 0, now.Offset);
                     if (now < targetDateTimeOffset)
-                    { await Task.Delay(targetDateTimeOffset - now); }
+                    { 
+                        await Task.Delay(targetDateTimeOffset - now); 
+                    }
+                    else{
+                        await notificationService.ScanAndSendNotificationAsync();
+                        TimeSpan span = targetDateTimeOffset.AddDays(1)-now;
+                        await Task.Delay(targetDateTimeOffset.AddDays(1)-now);
+                    }
                 }
 
-                NotificationService notificationService = app.ApplicationServices
-                    .GetRequiredService<NotificationService>();
+                
                 CancellationToken token = _tokenSource.Token;
                 while (!token.IsCancellationRequested)
                 {
@@ -104,7 +112,7 @@ namespace LabCMS.EquipmentUsageRecord.MachineDown
 
             lifetime.ApplicationStopping.Register(() => _tokenSource.Cancel());
 
-            StartScanAsync(app).ConfigureAwait(false);
+            StartScanAsync(app,TimeSpan.FromDays(1),8).ConfigureAwait(false);
             
             if(!env.IsDevelopment()){
                 app.UseConsulAsServiceProvider(nameof(MachineDownRecord));
