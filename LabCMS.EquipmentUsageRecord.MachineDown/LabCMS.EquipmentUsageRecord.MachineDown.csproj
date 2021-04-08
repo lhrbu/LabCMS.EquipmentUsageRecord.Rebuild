@@ -17,7 +17,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\LabCMS.EquipmentUsageRecord.Shared\LabCMS.EquipmentUsageRecord.Shared.csproj" />
-    <ProjectReference Include="..\LabCMS.Gateway.Shared\LabCMS.Gateway.Shared.csproj" />
   </ItemGroup>
 
 </Project>

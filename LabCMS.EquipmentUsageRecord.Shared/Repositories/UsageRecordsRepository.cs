@@ -9,22 +9,23 @@ using System.ComponentModel.DataAnnotations.Schema;
 using LabCMS.EquipmentUsageRecord.Shared.Utils;
 using System.IO;
 
-namespace LabCMS.EquipmentUsageRecord.Server.Repositories
+namespace LabCMS.EquipmentUsageRecord.Shared.Repositories
 {
-    public class UsageRecordsRepository:DbContext
+    public class UsageRecordsRepository : DbContext
     {
         public UsageRecordsRepository(DbContextOptions<UsageRecordsRepository> options)
             : base(options) { }
         public DbSet<Project> Projects => Set<Project>();
         public DbSet<EquipmentHourlyRate> EquipmentHourlyRates => Set<EquipmentHourlyRate>();
         public DbSet<UsageRecord> UsageRecords => Set<UsageRecord>();
+        public DbSet<ActiveProjectIndex> ActiveProjectIndices => Set<ActiveProjectIndex>();
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<UsageRecord>()
                 .HasIndex(item => item.ProjectNo);
             modelBuilder.Entity<UsageRecord>()
                 .HasIndex(item => item.EquipmentNo)
-                .IncludeProperties(item=>item.TestType);
+                .IncludeProperties(item => item.TestType);
             modelBuilder.Entity<UsageRecord>()
                 .HasIndex(item => item.StartTime);
             modelBuilder.Entity<UsageRecord>()
@@ -38,6 +39,6 @@ namespace LabCMS.EquipmentUsageRecord.Server.Repositories
                 .HasIndex(item => item.Name)
                 .IsUnique();
         }
-        
+
     }
 }

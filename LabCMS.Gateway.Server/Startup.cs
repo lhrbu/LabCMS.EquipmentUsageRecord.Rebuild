@@ -12,7 +12,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using LabCMS.Gateway.Shared.Extensions;
 using Serilog;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 
@@ -48,7 +47,7 @@ namespace LabCMS.Gateway.Server
             app.UseSerilogRequestLogging();
 
             app.UseOcelot().Wait();
-            app.UseConsulAsServiceProvider($"LabCMS.{nameof(Gateway)}");
+            // app.UseConsulAsServiceProvider($"LabCMS.{nameof(Gateway)}");
             //app.UseAuthorization();
 
             //app.UseEndpoints(endpoints =>

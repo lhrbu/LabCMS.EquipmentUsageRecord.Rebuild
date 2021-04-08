@@ -11,8 +11,4 @@
     <PackageReference Include="Serilog.AspNetCore" Version="3.4.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\LabCMS.Gateway.Shared\LabCMS.Gateway.Shared.csproj" />
-  </ItemGroup>
-
 </Project>

@@ -7,26 +7,23 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="EFCore.NamingConventions" Version="5.0.1" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.9.0-2.final" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.2">
+    <PackageReference Include="EFCore.NamingConventions" Version="5.0.2" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.10.0-1.final" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.0-preview.2.21154.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="NEST" Version="7.10.1" />
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="5.0.1" />
-    <PackageReference Include="Polly" Version="7.2.1" />
-    <PackageReference Include="Raccoon.Devkits.DynamicProxy" Version="1.0.2" />
-    <PackageReference Include="Raccoon.Devkits.JwtAuthorization" Version="1.0.2" />
-    <PackageReference Include="Serilog" Version="2.10.1-dev-01265" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.0-preview2" />
+    <PackageReference Include="Raccoon.Devkits.DynamicProxy" Version="1.2.0" />
+    <PackageReference Include="Raccoon.Devkits.Gateway.Client" Version="1.0.0" />
+    <PackageReference Include="Serilog" Version="2.10.1-dev-01285" />
     <PackageReference Include="Serilog.Sinks.File" Version="5.0.0-dev-00909" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
-    <PackageReference Include="Syncfusion.XlsIO.Net.Core" Version="18.4.0.33" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.1.1" />
+    <PackageReference Include="Syncfusion.XlsIO.Net.Core" Version="19.1.0.54" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\LabCMS.EquipmentUsageRecord.Shared\LabCMS.EquipmentUsageRecord.Shared.csproj" />
-    <ProjectReference Include="..\LabCMS.Gateway.Shared\LabCMS.Gateway.Shared.csproj" />
   </ItemGroup>
 
 </Project>

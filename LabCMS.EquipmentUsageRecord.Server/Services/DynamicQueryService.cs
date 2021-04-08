@@ -8,7 +8,7 @@ using System.Reflection;
 using System.Runtime.Loader;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using LabCMS.EquipmentUsageRecord.Server.Repositories;
+using LabCMS.EquipmentUsageRecord.Shared.Repositories;
 
 namespace LabCMS.EquipmentUsageRecord.Server.Services
 {
@@ -63,10 +63,11 @@ namespace LabCMS.EquipmentUsageRecord.Temp_{assemblyId}
                 AssemblyLoadContext.Default.Assemblies.Where(assembly=>!assembly.IsDynamic).ToArray());
             Type instanceType = tempAssembly.GetType($"LabCMS.EquipmentUsageRecord.Temp_{assemblyId}.DynamicQuereInstance")!;
             dynamic instance = Activator.CreateInstance(instanceType)!;
-            dynamic result = instance.DynamicQuery(_usageRecordsRepository.UsageRecords
-                .Include(item=>item.Project)
-                .Include(item=>item.EquipmentHourlyRate)
-                .AsNoTracking());
+            dynamic result = instance.DynamicQuery(
+                _usageRecordsRepository.UsageRecords
+                    .Include(item=>item.Project)
+                    .Include(item=>item.EquipmentHourlyRate)
+                    .AsNoTracking());
             return result;
         }
     }

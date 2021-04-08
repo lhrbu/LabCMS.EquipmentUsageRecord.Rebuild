@@ -1,4 +1,3 @@
-using LabCMS.EquipmentUsageRecord.Server.Repositories;
 using LabCMS.EquipmentUsageRecord.Shared.Models;
 using System;
 using System.Collections.Generic;

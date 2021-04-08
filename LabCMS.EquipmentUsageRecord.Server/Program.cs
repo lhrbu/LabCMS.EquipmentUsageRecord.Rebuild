@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Serilog;
-using Nest;
 using Microsoft.Extensions.DependencyInjection;
 using LabCMS.EquipmentUsageRecord.Server.Services;
 
@@ -17,10 +16,6 @@ namespace LabCMS.EquipmentUsageRecord.Server
     {
         public static void Main(string[] args)
         {
-            //var host = CreateHostBuilder(args).Build();
-            //var service = host.Services.GetRequiredService<SecretEncryptService>();
-            //var b64 = service.Encrypt("host=localhost:password=1234qwer");
-            //var content = service.Decrypt(b64);
             RegisterSyncfusion();
             CreateHostBuilder(args).Build().Run();
         }

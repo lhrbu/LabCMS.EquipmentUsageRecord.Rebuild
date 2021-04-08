@@ -1,7 +1,6 @@
-using LabCMS.EquipmentUsageRecord.Server.Proxies;
-using LabCMS.EquipmentUsageRecord.Server.Repositories;
 using LabCMS.EquipmentUsageRecord.Server.Services;
-using LabCMS.Gateway.Shared.Extensions;
+using LabCMS.EquipmentUsageRecord.Shared.Extensions;
+using LabCMS.EquipmentUsageRecord.Shared.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -11,11 +10,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using Polly;
-using Polly.Bulkhead;
-using Polly.Registry;
 using Raccoon.Devkits.DynamicProxy;
-using Raccoon.Devkits.JwtAuthorization;
+using Raccoon.Devkits.Gateway.Client;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -44,33 +40,18 @@ namespace LabCMS.EquipmentUsageRecord.Server
             services.AddSwaggerGen(c =>c.SwaggerDoc("v1", new OpenApiInfo { Title = "LabCMS.EquipmentUsageRecord.Server", Version = "v1" }));
             
             services.AddSingleton<UsageRecordSoftDeleteLogService>();
-            services.AddDbContextPool<UsageRecordsRepository>((serviceProvider,options) =>
-            {
-                options.UseNpgsql(Configuration.GetConnectionString(nameof(UsageRecordsRepository)));
-                options.UseSnakeCaseNamingConvention();
-                
-                options.LogTo(serviceProvider.GetRequiredService<DbLogHandleService>().EnqueueDbLog, 
-                    LogLevel.Information).EnableSensitiveDataLogging();
-            },256);
+            services.AddUsageRecordsRepository(Configuration);
 
-            //services.AddSingleton<ElasticSearchInteropService>();
-            services.AddSingletonProxy<IElasticSearchInteropService,
-                ElasticSearchInteropService, ElasticSearchInteropProxy>();
-            services.AddSingleton<DbLogHandleService>();
-            services.AddBulkheadRetryAsyncFilter();
-            services.AddTransient<SecretEncryptService>();
             services.AddTransient<ExcelExportService>();
             services.AddTransient<DynamicQueryService>();
-            services.AddJwtAuthorization();
+            services.AddEasyNetQ();
         }
 
         
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env,DbLogHandleService dbLogHandleService)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            dbLogHandleService.BeginWriteDbLog().ConfigureAwait(false);
-
 
             if (env.IsDevelopment())
             {
@@ -78,11 +59,8 @@ namespace LabCMS.EquipmentUsageRecord.Server
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "LabCMS.EquipmentUsageRecord.Server v1"));
             }
-            //app.ApplicationServices.GetRequiredService<IHostApplicationLifetime>()
-            //    .ApplicationStopped.Register(Uninstall);
 
             app.UseRouting();
-            app.UseCookieJwtAuthorization();
 
             app.UseEndpoints(endpoints =>
             {

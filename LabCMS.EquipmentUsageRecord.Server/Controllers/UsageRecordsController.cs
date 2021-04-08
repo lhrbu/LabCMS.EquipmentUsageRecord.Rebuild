@@ -1,5 +1,4 @@
-﻿using LabCMS.EquipmentUsageRecord.Server.Repositories;
-using LabCMS.EquipmentUsageRecord.Server.Services;
+﻿using LabCMS.EquipmentUsageRecord.Server.Services;
 using LabCMS.EquipmentUsageRecord.Shared.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -10,30 +9,31 @@ using System.Linq;
 using System.Data;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
+using LabCMS.EquipmentUsageRecord.Shared.Repositories;
+using EasyNetQ;
+using LabCMS.EquipmentUsageRecord.Shared.Events;
 
 namespace LabCMS.EquipmentUsageRecord.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [ServiceFilter(typeof(BulkheadRetryAsyncFilter))]
     public class UsageRecordsController : ControllerBase
     {
         private readonly UsageRecordsRepository _repository;
         private readonly UsageRecordSoftDeleteLogService _softDeleteLogService;
-        private readonly IElasticSearchInteropService _elasticSearch;
         private readonly IConfiguration _configuration;
+        private readonly IBus _bus;
         public UsageRecordsController(
             UsageRecordsRepository repository,
             UsageRecordSoftDeleteLogService softDeleteLogService,
-            IElasticSearchInteropService elasticSearch,
+            IBus bus,
             IConfiguration configuration)
         { 
             _repository = repository;
             _softDeleteLogService = softDeleteLogService;
-            _elasticSearch = elasticSearch;
             _configuration = configuration;
+            _bus = bus;
         }
-        public bool EnableElasticSearch => _configuration.GetValue<bool>(nameof(EnableElasticSearch));
 
         private async ValueTask LoadReferences(UsageRecord usageRecord)
         {
@@ -44,17 +44,22 @@ namespace LabCMS.EquipmentUsageRecord.Server.Controllers
         [HttpGet]
         public IAsyncEnumerable<UsageRecord> GetAsync() =>
             _repository.UsageRecords.OrderBy(item=>item.Id).AsNoTracking().AsAsyncEnumerable();
+
+        private async ValueTask PublishPersisientEventAsync(UsageRecord usageRecord, UsageRecordPersisientEventKind eventKind)
+            => await _bus.PubSub.PublishAsync<UsageRecordPersisientEventArgs>(
+                new(usageRecord, eventKind))
+                    .ContinueWith(task =>
+                    {
+                        if (task.IsFaulted && task.Exception != null) { throw task.Exception; }
+                    });
+
         [HttpPost]
         public async ValueTask PostAsync(UsageRecord usageRecord)
         {
-            try
-            {
-                await _repository.UsageRecords.AddAsync(usageRecord);
-                await _repository.SaveChangesAsync();
-                await LoadReferences(usageRecord);
-                _ = _elasticSearch.IndexAsync(usageRecord).ConfigureAwait(false);
-            }catch(Exception e) { throw; }
-            
+            await _repository.UsageRecords.AddAsync(usageRecord);
+            await _repository.SaveChangesAsync();
+            await PublishPersisientEventAsync(usageRecord, UsageRecordPersisientEventKind.Add);
+
         }
 
         [HttpPost("Many")]
@@ -62,11 +67,10 @@ namespace LabCMS.EquipmentUsageRecord.Server.Controllers
         {
             await _repository.UsageRecords.AddRangeAsync(usageRecords);
             await _repository.SaveChangesAsync();
-
-            foreach (UsageRecord usageRecord in usageRecords)
-            { await LoadReferences(usageRecord); }
-            _ = _elasticSearch.IndexManyAsync(usageRecords).ConfigureAwait(false);
-
+            foreach(UsageRecord usageRecord in usageRecords)
+            {
+                await PublishPersisientEventAsync(usageRecord, UsageRecordPersisientEventKind.Update);
+            }
         }
 
         [HttpPut]
@@ -74,8 +78,7 @@ namespace LabCMS.EquipmentUsageRecord.Server.Controllers
         {
             _repository.UsageRecords.Update(usageRecord);
             await _repository.SaveChangesAsync();
-            await LoadReferences(usageRecord);
-            _ = _elasticSearch.IndexAsync(usageRecord).ConfigureAwait(false);
+            await PublishPersisientEventAsync(usageRecord, UsageRecordPersisientEventKind.Update);
 
         }
         [HttpDelete("{id}")]
@@ -84,10 +87,9 @@ namespace LabCMS.EquipmentUsageRecord.Server.Controllers
             UsageRecord? usageRecord = await _repository.UsageRecords.FindAsync(id);
             if (usageRecord is not null)
             {
-                _ = _elasticSearch.RemoveByIdAsync(id).ConfigureAwait(false);
                 _repository.UsageRecords.Remove(usageRecord);
                 await _repository.SaveChangesAsync();
-                _softDeleteLogService.Logger.Information("{UsageRecord}", usageRecord);
+                await PublishPersisientEventAsync(usageRecord, UsageRecordPersisientEventKind.Delete);
             }
         }
     }
