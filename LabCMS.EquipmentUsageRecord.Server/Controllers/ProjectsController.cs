@@ -55,30 +55,5 @@ namespace LabCMS.EquipmentUsageRecord.Server.Controllers
             else { return NotFound($"{no} is not a valid active project no."); }
         }
 
-        //[HttpPut]
-        //public async ValueTask PutAsync(Project project)
-        //{
-        //    _repository.Projects.Update(project);
-        //    await _repository.SaveChangesAsync();
-        //}
-
-        //[HttpDelete("{projectName}")]
-        //public async ValueTask<IActionResult> DeleteByName(string projectName)
-        //{
-        //    string decodedProjectName = System.Web.HttpUtility.UrlDecode(projectName);
-        //    Project? project = await _repository.Projects.FirstOrDefaultAsync(item => item.Name == decodedProjectName);
-        //    if(project is not null)
-        //    {
-        //        await _repository.Database.BeginTransactionAsync(IsolationLevel.Serializable);
-        //        if(!await _repository.UsageRecords.AnyAsync(item=>item.ProjectNo==project.No))
-        //        {
-        //            _repository.Projects.Remove(project);
-        //        }
-        //        await _repository.Database.CommitTransactionAsync();
-        //        await _repository.SaveChangesAsync();
-        //        return Ok();
-        //    }
-        //    else { return NotFound(); }
-        //}
     }
 }

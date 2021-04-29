@@ -8,6 +8,7 @@ using System.Linq;
 using System.Data;
 using System.Threading.Tasks;
 using LabCMS.EquipmentUsageRecord.Server.Services;
+using Python.Runtime;
 
 namespace LabCMS.EquipmentUsageRecord.Server.Controllers
 {
@@ -16,11 +17,20 @@ namespace LabCMS.EquipmentUsageRecord.Server.Controllers
     public class DynamicQueryController:ControllerBase
     {
         private readonly DynamicQueryService _dynamicQueryService;
-        public DynamicQueryController(DynamicQueryService dynamicQueryService)
-        { _dynamicQueryService = dynamicQueryService;}
+        private readonly PythonDynamicQueryService _pythonQuery;
+        public DynamicQueryController(
+            DynamicQueryService dynamicQueryService,
+            PythonDynamicQueryService pythonQuery)
+        { 
+            _dynamicQueryService = dynamicQueryService;
+            _pythonQuery = pythonQuery;
+        }
 
         [HttpPost]
         public dynamic Post([FromBody]string codePiece)=>
             _dynamicQueryService.DynamicQuery(codePiece);
+        [HttpPost("Python")]
+        public object PostPy([FromBody] string pytcode) =>
+            _pythonQuery.QueryAsync(pytcode);
     }
 }

@@ -45,20 +45,14 @@ namespace LabCMS.EquipmentUsageRecord.Server.Controllers
         public IAsyncEnumerable<UsageRecord> GetAsync() =>
             _repository.UsageRecords.OrderBy(item=>item.Id).AsNoTracking().AsAsyncEnumerable();
 
-        private async ValueTask PublishPersisientEventAsync(UsageRecord usageRecord, UsageRecordPersisientEventKind eventKind)
-            => await _bus.PubSub.PublishAsync<UsageRecordPersisientEventArgs>(
-                new(usageRecord, eventKind))
-                    .ContinueWith(task =>
-                    {
-                        if (task.IsFaulted && task.Exception != null) { throw task.Exception; }
-                    });
+        
 
         [HttpPost]
         public async ValueTask PostAsync(UsageRecord usageRecord)
         {
             await _repository.UsageRecords.AddAsync(usageRecord);
             await _repository.SaveChangesAsync();
-            await PublishPersisientEventAsync(usageRecord, UsageRecordPersisientEventKind.Add);
+            await PublishPersisientEventAsync(usageRecord, UsageRecordsChangeEventKind.Add);
 
         }
 
@@ -69,7 +63,7 @@ namespace LabCMS.EquipmentUsageRecord.Server.Controllers
             await _repository.SaveChangesAsync();
             foreach(UsageRecord usageRecord in usageRecords)
             {
-                await PublishPersisientEventAsync(usageRecord, UsageRecordPersisientEventKind.Update);
+                await PublishPersisientEventAsync(usageRecord, UsageRecordsChangeEventKind.Add);
             }
         }
 
@@ -78,7 +72,7 @@ namespace LabCMS.EquipmentUsageRecord.Server.Controllers
         {
             _repository.UsageRecords.Update(usageRecord);
             await _repository.SaveChangesAsync();
-            await PublishPersisientEventAsync(usageRecord, UsageRecordPersisientEventKind.Update);
+            await PublishPersisientEventAsync(usageRecord, UsageRecordsChangeEventKind.Update);
 
         }
         [HttpDelete("{id}")]
@@ -89,9 +83,14 @@ namespace LabCMS.EquipmentUsageRecord.Server.Controllers
             {
                 _repository.UsageRecords.Remove(usageRecord);
                 await _repository.SaveChangesAsync();
-                await PublishPersisientEventAsync(usageRecord, UsageRecordPersisientEventKind.Delete);
+                await PublishPersisientEventAsync(usageRecord, UsageRecordsChangeEventKind.Delete);
             }
         }
+
+        private async ValueTask PublishPersisientEventAsync(UsageRecord usageRecord, UsageRecordsChangeEventKind eventKind)
+            => await _bus.PubSub.PublishAsync<UsageRecordPersisientEventArgs>(
+                new(usageRecord, eventKind))
+                    .ContinueWith(task =>{if (task.IsFaulted && task.Exception != null) { throw task.Exception; }});
     }
 
     

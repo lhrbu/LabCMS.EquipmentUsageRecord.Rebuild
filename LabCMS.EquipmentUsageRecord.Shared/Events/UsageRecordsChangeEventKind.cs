@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LabCMS.EquipmentUsageRecord.Shared.Events
 {
-    public enum UsageRecordPersisientEventKind
+    public enum UsageRecordsChangeEventKind
     {
         Add,Update,Delete
     }

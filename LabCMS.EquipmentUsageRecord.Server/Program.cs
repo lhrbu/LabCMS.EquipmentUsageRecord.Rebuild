@@ -16,6 +16,7 @@ namespace LabCMS.EquipmentUsageRecord.Server
     {
         public static void Main(string[] args)
         {
+            
             RegisterSyncfusion();
             CreateHostBuilder(args).Build().Run();
         }

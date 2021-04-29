@@ -45,6 +45,8 @@ namespace LabCMS.EquipmentUsageRecord.Server
             services.AddTransient<ExcelExportService>();
             services.AddTransient<DynamicQueryService>();
             services.AddEasyNetQ();
+            services.AddSingleton<PythonDynamicQueryService>(provider=>
+                new(provider, @"C:\Users\lhrbuxiaoxin\AppData\Local\Programs\Python\Python39\python39.dll"));
         }
 
         

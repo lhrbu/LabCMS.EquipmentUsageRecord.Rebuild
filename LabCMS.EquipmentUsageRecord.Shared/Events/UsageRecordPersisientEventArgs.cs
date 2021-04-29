@@ -9,9 +9,9 @@ namespace LabCMS.EquipmentUsageRecord.Shared.Events
 {
     public class UsageRecordPersisientEventArgs:EventArgs
     {
-        public UsageRecordPersisientEventKind EventKind { get; }
+        public UsageRecordsChangeEventKind EventKind { get; }
         public UsageRecord UsageRecord { get; }
-        public UsageRecordPersisientEventArgs(UsageRecord usageRecord, UsageRecordPersisientEventKind eventKind)
+        public UsageRecordPersisientEventArgs(UsageRecord usageRecord, UsageRecordsChangeEventKind eventKind)
         {
             EventKind = eventKind;
             UsageRecord = usageRecord;

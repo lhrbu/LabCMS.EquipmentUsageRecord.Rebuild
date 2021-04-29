@@ -23,36 +23,5 @@ namespace LabCMS.EquipmentUsageRecord.Server.Controllers
         [HttpGet]
         public IAsyncEnumerable<EquipmentHourlyRate> GetAsync() =>
             _repository.EquipmentHourlyRates.AsNoTracking().AsAsyncEnumerable();
-        //[HttpPost]
-        //public async ValueTask PostAsync(EquipmentHourlyRate equipmentHourlyRate)
-        //{
-        //    await _repository.EquipmentHourlyRates.AddAsync(equipmentHourlyRate);
-        //    await _repository.SaveChangesAsync();
-        //}
-        //[HttpPut]
-        //public async ValueTask PutAsync(EquipmentHourlyRate equipmentHourlyRate)
-        //{
-        //    _repository.EquipmentHourlyRates.Update(equipmentHourlyRate);
-        //    await _repository.SaveChangesAsync();
-        //}
-        //[HttpDelete("{equipmentNo}")]
-        //public async ValueTask<IActionResult> DeleteByNoAsync(string equipmentNo)
-        //{
-        //    string decodedEquipmentNo = System.Web.HttpUtility.UrlDecode(equipmentNo);
-        //    EquipmentHourlyRate? equipmentHourlyRate = await
-        //        _repository.EquipmentHourlyRates.FindAsync(decodedEquipmentNo);
-        //    if (equipmentHourlyRate is not null)
-        //    {
-        //        await _repository.Database.BeginTransactionAsync(IsolationLevel.Serializable);
-        //        if (!await _repository.UsageRecords.AnyAsync(item => item.EquipmentNo == equipmentNo))
-        //        {
-        //            _repository.EquipmentHourlyRates.Remove(equipmentHourlyRate);
-        //        }
-        //        await _repository.Database.CommitTransactionAsync();
-        //        await _repository.SaveChangesAsync();
-        //        return Ok();
-        //    }
-        //    else { return NotFound(); }
-        //}
     }
 }
