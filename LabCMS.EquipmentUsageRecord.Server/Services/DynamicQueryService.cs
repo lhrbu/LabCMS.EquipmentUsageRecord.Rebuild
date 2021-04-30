@@ -8,7 +8,7 @@ using System.Reflection;
 using System.Runtime.Loader;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using LabCMS.EquipmentUsageRecord.Shared.Repositories;
+using LabCMS.EquipmentUsageRecord.Server.Repositories;
 
 namespace LabCMS.EquipmentUsageRecord.Server.Services
 {

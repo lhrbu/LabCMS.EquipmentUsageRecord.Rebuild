@@ -16,42 +16,21 @@ namespace LabCMS.EquipmentUsageRecord.UnitTest
        
 
        [Fact]
-        public async Task TestGetAsync()
+        public void TestGet()
         {
             var controller = TestServerProvider
                 .CreateController<ProjectsController>();
-            await foreach(Project project in controller.GetAsync())
+            foreach(Project project in controller.Get())
             { Assert.NotNull(project);}
         }
 
         [Fact]
-        public async Task TestPostAndDeleteAsync()
+        public void TestGetActive()
         {
-            var controller = TestServerProvider.CreateController<ProjectsController>();
-            Project project = new() { No = "1394E.XXXYYYPost", Name = "TestProject", NameInFIN = "TestProjectInFIN" };
-            var projects = controller.GetAsync().ToEnumerable();
-            
-            await controller.PostAsync(project);
-            var projectsAfterPost = controller.GetAsync().ToEnumerable();
-            Assert.Contains(projectsAfterPost, item => item.No == project.No);
-
-            await controller.DeleteByName(project.Name);
-            var projectsAfterDelete = controller.GetAsync().ToEnumerable();
-            Assert.DoesNotContain(projectsAfterDelete, item => item.No == project.No);
-        }
-
-        [Fact]
-        public async Task TestPutAsync()
-        {
-            var controller = TestServerProvider.CreateController<ProjectsController>();
-            Project project = new() { No = "1394E.XXXYYYUpdate", Name = Guid.NewGuid().ToString(), NameInFIN = "TestProjectInFIN" };
-            await controller.PostAsync(project);
-            project.Name = Guid.NewGuid().ToString();
-
-            await controller.PutAsync(project);
-            var projectsAfterPut = controller.GetAsync().ToEnumerable();
-            Assert.Equal(project.Name, projectsAfterPut.First(item => item.No == project.No).Name);
-            await controller.DeleteByName(project.Name);
+            var controller = TestServerProvider
+                .CreateController<ProjectsController>();
+            foreach (Project project in controller.Get())
+            { Assert.NotNull(project); }
         }
     }
 }

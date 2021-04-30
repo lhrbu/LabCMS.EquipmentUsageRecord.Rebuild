@@ -1,5 +1,5 @@
-﻿using LabCMS.EquipmentUsageRecord.Shared.Models;
-using LabCMS.EquipmentUsageRecord.Shared.Repositories;
+﻿using LabCMS.EquipmentUsageRecord.Server.Repositories;
+using LabCMS.EquipmentUsageRecord.Shared.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -21,13 +21,12 @@ namespace LabCMS.EquipmentUsageRecord.Server.Controllers
         { _repository = repository; }
 
         [HttpGet]
-        public IAsyncEnumerable<Project> GetAsync() =>
-            _repository.Projects.AsNoTracking().AsAsyncEnumerable();
+        public IEnumerable<Project> Get()=>_repository.Projects.AsNoTracking();
 
         [HttpGet("Active")]
-        public IAsyncEnumerable<Project> GetActiveAsync() =>
+        public IEnumerable<Project> GetActive() =>
             _repository.ActiveProjectIndices.Include(item => item.Project)
-                .Select(item => item.Project!).AsNoTracking().AsAsyncEnumerable();
+                .Select(item => item.Project!).AsNoTracking();
 
         [HttpPost("Active/{no}")]
         public async ValueTask<IActionResult> PostActiveAsync(string no)

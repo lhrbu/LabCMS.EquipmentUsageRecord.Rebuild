@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LabCMS.EquipmentUsageRecord.Shared.Events
+namespace LabCMS.EquipmentUsageRecord.Shared.MQEvents
 {
-    public class UsageRecordPersisientEventArgs:EventArgs
+    public class UsageRecordPersisientEventArgs : EventArgs
     {
         public UsageRecordsChangeEventKind EventKind { get; }
         public UsageRecord UsageRecord { get; }

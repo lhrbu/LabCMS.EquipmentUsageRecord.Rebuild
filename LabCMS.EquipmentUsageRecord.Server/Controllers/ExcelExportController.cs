@@ -1,6 +1,6 @@
+using LabCMS.EquipmentUsageRecord.Server.Repositories;
 using LabCMS.EquipmentUsageRecord.Server.Services;
 using LabCMS.EquipmentUsageRecord.Shared.Models;
-using LabCMS.EquipmentUsageRecord.Shared.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

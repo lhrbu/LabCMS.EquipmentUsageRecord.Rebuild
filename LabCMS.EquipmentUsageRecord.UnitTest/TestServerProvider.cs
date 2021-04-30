@@ -18,8 +18,6 @@ namespace LabCMS.EquipmentUsageRecord.UnitTest
         public static TestServer Instance { get; } = new(WebHost.CreateDefaultBuilder().UseStartup<Startup>().UseEnvironment("Development"));
 
         public static ControllerCreateService ControllerCreateService { get; } = new();
-
-
         public static TController CreateController<TController>() where TController : ControllerBase
         {
             IServiceProvider scopedServiceProvider = Instance.Services.CreateScope().ServiceProvider;

@@ -1,5 +1,5 @@
-﻿using LabCMS.EquipmentUsageRecord.Shared.Models;
-using LabCMS.EquipmentUsageRecord.Shared.Repositories;
+﻿using LabCMS.EquipmentUsageRecord.Server.Repositories;
+using LabCMS.EquipmentUsageRecord.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Python.Runtime;

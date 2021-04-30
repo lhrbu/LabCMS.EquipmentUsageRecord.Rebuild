@@ -14,14 +14,13 @@ namespace LabCMS.EquipmentUsageRecord.Server
 {
     public class Program
     {
+        public const string Version = "3.0.0";
         public static void Main(string[] args)
         {
             
             RegisterSyncfusion();
             CreateHostBuilder(args).Build().Run();
         }
-        
-
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>

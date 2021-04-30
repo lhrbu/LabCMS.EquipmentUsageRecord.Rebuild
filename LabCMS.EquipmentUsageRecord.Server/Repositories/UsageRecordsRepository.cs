@@ -9,7 +9,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using LabCMS.EquipmentUsageRecord.Shared.Utils;
 using System.IO;
 
-namespace LabCMS.EquipmentUsageRecord.Shared.Repositories
+namespace LabCMS.EquipmentUsageRecord.Server.Repositories
 {
     public class UsageRecordsRepository : DbContext
     {
@@ -25,7 +25,7 @@ namespace LabCMS.EquipmentUsageRecord.Shared.Repositories
                 .HasIndex(item => item.ProjectNo);
             modelBuilder.Entity<UsageRecord>()
                 .HasIndex(item => item.EquipmentNo)
-                .IncludeProperties(item => item.TestType);
+                .IncludeProperties(item => item.TestType!);
             modelBuilder.Entity<UsageRecord>()
                 .HasIndex(item => item.StartTime);
             modelBuilder.Entity<UsageRecord>()

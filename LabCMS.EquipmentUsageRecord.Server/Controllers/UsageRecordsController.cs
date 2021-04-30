@@ -9,9 +9,10 @@ using System.Linq;
 using System.Data;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
-using LabCMS.EquipmentUsageRecord.Shared.Repositories;
 using EasyNetQ;
-using LabCMS.EquipmentUsageRecord.Shared.Events;
+using LabCMS.EquipmentUsageRecord.Shared.Services;
+using LabCMS.EquipmentUsageRecord.Shared.MQEvents;
+using LabCMS.EquipmentUsageRecord.Server.Repositories;
 
 namespace LabCMS.EquipmentUsageRecord.Server.Controllers
 {
@@ -20,32 +21,23 @@ namespace LabCMS.EquipmentUsageRecord.Server.Controllers
     public class UsageRecordsController : ControllerBase
     {
         private readonly UsageRecordsRepository _repository;
-        private readonly UsageRecordSoftDeleteLogService _softDeleteLogService;
         private readonly IConfiguration _configuration;
         private readonly IBus _bus;
         public UsageRecordsController(
             UsageRecordsRepository repository,
-            UsageRecordSoftDeleteLogService softDeleteLogService,
             IBus bus,
             IConfiguration configuration)
         { 
             _repository = repository;
-            _softDeleteLogService = softDeleteLogService;
             _configuration = configuration;
             _bus = bus;
         }
 
-        private async ValueTask LoadReferences(UsageRecord usageRecord)
-        {
-            await _repository.Entry(usageRecord).Reference(item => item.Project).LoadAsync();
-            await _repository.Entry(usageRecord).Reference(item => item.EquipmentHourlyRate).LoadAsync();
-        }
-
         [HttpGet]
-        public IAsyncEnumerable<UsageRecord> GetAsync() =>
-            _repository.UsageRecords.OrderBy(item=>item.Id).AsNoTracking().AsAsyncEnumerable();
-
-        
+        public IEnumerable<UsageRecord> Get() =>
+            _repository.UsageRecords.Include(item=>item.Project)
+                .Include(item=>item.EquipmentHourlyRate).OrderBy(item=>item.Id)
+                .AsNoTracking();
 
         [HttpPost]
         public async ValueTask PostAsync(UsageRecord usageRecord)
@@ -76,7 +68,7 @@ namespace LabCMS.EquipmentUsageRecord.Server.Controllers
 
         }
         [HttpDelete("{id}")]
-        public async ValueTask DeleteById(int id)
+        public async ValueTask<IActionResult> DeleteById(int id)
         {
             UsageRecord? usageRecord = await _repository.UsageRecords.FindAsync(id);
             if (usageRecord is not null)
@@ -84,13 +76,20 @@ namespace LabCMS.EquipmentUsageRecord.Server.Controllers
                 _repository.UsageRecords.Remove(usageRecord);
                 await _repository.SaveChangesAsync();
                 await PublishPersisientEventAsync(usageRecord, UsageRecordsChangeEventKind.Delete);
+                return Ok();
             }
+            else { return NotFound($"{id} is not a valid record id."); }
         }
 
         private async ValueTask PublishPersisientEventAsync(UsageRecord usageRecord, UsageRecordsChangeEventKind eventKind)
-            => await _bus.PubSub.PublishAsync<UsageRecordPersisientEventArgs>(
-                new(usageRecord, eventKind))
-                    .ContinueWith(task =>{if (task.IsFaulted && task.Exception != null) { throw task.Exception; }});
+        {
+            if (_bus is not DumyBus)
+            {
+                await _bus.PubSub.PublishAsync<UsageRecordPersisientEventArgs>(
+                      new(usageRecord, eventKind))
+                        .ContinueWith(task => { if (task.IsFaulted && task.Exception != null) { throw task.Exception; } });
+            }
+        }
     }
 
     

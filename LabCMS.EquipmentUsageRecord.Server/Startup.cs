@@ -1,6 +1,7 @@
+using EasyNetQ;
+using LabCMS.EquipmentUsageRecord.Server.Repositories;
 using LabCMS.EquipmentUsageRecord.Server.Services;
 using LabCMS.EquipmentUsageRecord.Shared.Extensions;
-using LabCMS.EquipmentUsageRecord.Shared.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -38,13 +39,12 @@ namespace LabCMS.EquipmentUsageRecord.Server
 
             services.AddControllers().AddJsonOptions(options=>options.JsonSerializerOptions.PropertyNamingPolicy=null);
             services.AddSwaggerGen(c =>c.SwaggerDoc("v1", new OpenApiInfo { Title = "LabCMS.EquipmentUsageRecord.Server", Version = "v1" }));
-            
-            services.AddSingleton<UsageRecordSoftDeleteLogService>();
-            services.AddUsageRecordsRepository(Configuration);
-
+            services.AddDbContextPool<UsageRecordsRepository>((serviceProvider, options) =>
+                options.UseNpgsql(Configuration.GetConnectionString(nameof(UsageRecordsRepository))),
+                64);
             services.AddTransient<ExcelExportService>();
             services.AddTransient<DynamicQueryService>();
-            services.AddEasyNetQ();
+            services.AddEasyNetQ(Configuration);
             services.AddSingleton<PythonDynamicQueryService>(provider=>
                 new(provider, @"C:\Users\lhrbuxiaoxin\AppData\Local\Programs\Python\Python39\python39.dll"));
         }

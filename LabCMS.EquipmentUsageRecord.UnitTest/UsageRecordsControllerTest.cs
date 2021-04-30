@@ -12,10 +12,10 @@ namespace LabCMS.EquipmentUsageRecord.UnitTest
     public class UsageRecordsControllerTest
     {
         [Fact]
-        public async Task TestGetAsync()
+        public void TestGet()
         {
             var controller = TestServerProvider.CreateController<UsageRecordsController>();
-            await foreach(UsageRecord usageRecord in controller.GetAsync())
+            foreach(UsageRecord usageRecord in controller.Get())
             { Assert.NotNull(usageRecord); }
         }
 
@@ -28,16 +28,15 @@ namespace LabCMS.EquipmentUsageRecord.UnitTest
                 User = Guid.NewGuid().ToString(),
                 TestNo = "Test123",
                 TestType = "TY",
-                ProjectNo= "1394E.X00001",
+                ProjectNo= "1394P.000001",
                 EquipmentNo = "01-01",
                 StartTime = DateTimeOffset.Now,
                 EndTime = DateTimeOffset.Now.AddHours(6)
             };
-            var usageRecords = controller.GetAsync().ToEnumerable().ToList();
+            var usageRecords = controller.Get().ToList();
             await controller.PostAsync(usageRecord);
-            var usageRecordsAfterPost = controller.GetAsync().ToEnumerable().ToList();
+            var usageRecordsAfterPost = controller.Get().ToList();
             Assert.Contains(usageRecordsAfterPost, item => item.User == usageRecord.User);
-
             await controller.DeleteById(usageRecordsAfterPost.First(item => item.User == usageRecord.User).Id);
         }
 
@@ -51,7 +50,7 @@ namespace LabCMS.EquipmentUsageRecord.UnitTest
                 User = Guid.NewGuid().ToString(),
                 TestNo = "Test123",
                 TestType = "TY",
-                ProjectNo = "1394E.X00001",
+                ProjectNo = "1394P.000002",
                 EquipmentNo = "01-01",
                 StartTime = DateTimeOffset.Now,
                 EndTime = DateTimeOffset.Now.AddHours(6)
@@ -61,15 +60,15 @@ namespace LabCMS.EquipmentUsageRecord.UnitTest
                 User = Guid.NewGuid().ToString(),
                 TestNo = "Test123",
                 TestType = "TY",
-                ProjectNo = "1394E.X00002",
-                EquipmentNo = "01-01",
+                ProjectNo = "1394P.000003",
+                EquipmentNo = "13-14",
                 StartTime = DateTimeOffset.Now,
                 EndTime = DateTimeOffset.Now.AddHours(12)
             };
-            var usageRecords = controller.GetAsync().ToEnumerable();
+            var usageRecords = controller.Get();
 
             await controller.PostManyAsync(new[] { usageRecord, usageRecord2 });
-            var usageRecordsAfterPost = controller.GetAsync().ToEnumerable();
+            var usageRecordsAfterPost = controller.Get();
             Assert.Contains(usageRecordsAfterPost, item => item.User == usageRecord.User);
             Assert.Contains(usageRecordsAfterPost, item => item.User == usageRecord2.User);
             await controller.DeleteById(usageRecordsAfterPost.First(item => item.User == usageRecord.User).Id);
@@ -85,18 +84,18 @@ namespace LabCMS.EquipmentUsageRecord.UnitTest
                 User = Guid.NewGuid().ToString(),
                 TestNo = "Test123",
                 TestType = "TY",
-                ProjectNo = "1394E.X00001",
+                ProjectNo = "1394P.000001",
                 EquipmentNo = "01-01",
                 StartTime = DateTimeOffset.Now,
                 EndTime = DateTimeOffset.Now.AddHours(6)
             };
             await controller.PostAsync(usageRecord);
-            var usageRecords = controller.GetAsync().ToEnumerable();
+            var usageRecords = controller.Get();
 
             usageRecord.Id = usageRecords.First(item => item.User == usageRecord.User).Id;
             usageRecord.User = Guid.NewGuid().ToString();
             await controller.PutAsync(usageRecord);
-            var usageRecordsAfterPut = controller.GetAsync().ToEnumerable();
+            var usageRecordsAfterPut = controller.Get();
             Assert.Contains(usageRecordsAfterPut, item => item.User == usageRecord.User);
             await controller.DeleteById(usageRecord.Id);
 

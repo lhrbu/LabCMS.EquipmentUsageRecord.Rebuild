@@ -8,7 +8,7 @@ using System.Linq;
 using System.Data;
 using System.Threading.Tasks;
 using LabCMS.EquipmentUsageRecord.Server.Services;
-using LabCMS.EquipmentUsageRecord.Shared.Repositories;
+using LabCMS.EquipmentUsageRecord.Server.Repositories;
 
 namespace LabCMS.EquipmentUsageRecord.Server.Controllers
 {
@@ -21,7 +21,7 @@ namespace LabCMS.EquipmentUsageRecord.Server.Controllers
             UsageRecordsRepository repository)
         { _repository = repository; }
         [HttpGet]
-        public IAsyncEnumerable<EquipmentHourlyRate> GetAsync() =>
-            _repository.EquipmentHourlyRates.AsNoTracking().AsAsyncEnumerable();
+        public IEnumerable<EquipmentHourlyRate> Get() =>
+            _repository.EquipmentHourlyRates.AsNoTracking();
     }
 }
